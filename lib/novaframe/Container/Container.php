@@ -157,8 +157,9 @@ class Container
             }
         } else {
             if (!is_callable($bind['factory'])) {
-                $factory = function () use ($abstract, $parameters) {
-                    return new $abstract(...$parameters);
+                $factory = $bind['factory'];
+                $factory = function () use ($factory, $parameters) {
+                    return new $factory(...$parameters);
                 };
             } else {
                 $factory = $bind['factory'];
