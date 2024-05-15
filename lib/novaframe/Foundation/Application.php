@@ -3,6 +3,8 @@
 namespace Nova\Foundation;
 
 use Nova\Container\Container;
+use Nova\HTTP\IncomingRequest;
+use Nova\HTTP\Response;
 
 class Application extends Container
 {
@@ -26,6 +28,17 @@ class Application extends Container
     public function version(): string
     {
         return $this->version;
+    }
+
+    /**
+     * Launch the application base on php environment
+     *
+     * @param IncomingRequest $request
+     * @param Response        $response
+     */
+    public function launch(IncomingRequest $request, Response $response)
+    {
+        echo 'success';
     }
 
     /**

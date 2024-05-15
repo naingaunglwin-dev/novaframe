@@ -51,3 +51,27 @@ require_once ROOT_PATH . '/vendor/autoload.php';
 if (file_exists(ROOT_PATH . '/tmp/maintenance.php')) {
     include ROOT_PATH . '/tmp/maintenance.php';
 }
+
+/*
+ |------------------------------------------
+ | Bootstrap File
+ |------------------------------------------
+ |
+ | Include the framework's bootstrap file
+ |
+ */
+$app = require_once ROOT_PATH . '/lib/novaframe/Bootstrap/app.php';
+
+/*
+ |-------------------------------------------------------
+ | Launch Application
+ |-------------------------------------------------------
+ |
+ | Launch NovaFrame Application with
+ | the request and response
+ |
+ */
+$app->launch(
+    Nova\HTTP\IncomingRequest::createFromGlobals(),
+    new Nova\HTTP\Response()
+);
