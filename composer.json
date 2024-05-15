@@ -14,7 +14,10 @@
         "psr-4": {
             "app\\": "app/",
             "Nova\\": "lib/novaframe/"
-        }
+        },
+        "files": [
+            "lib/novaframe/Helpers/utility.php"
+        ]
     },
     "require": {
         "php": ">=8.2",
