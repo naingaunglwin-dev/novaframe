@@ -1,0 +1,27 @@
+{
+    "name": "naingaunglwin-dev/novaframe",
+    "description": "Simple and Basic PHP Framework",
+    "type": "library",
+    "keywords": ["framework", "php"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "naingaunglwin-dev",
+            "email": "naingaunglwin.wd@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "app\\": "app/",
+            "Nova\\": "lib/novaframe/"
+        }
+    },
+    "require": {
+        "php": ">=8.2",
+        "ext-pdo": "*",
+        "symfony/console": "^7.0",
+        "symfony/process": "^7.0",
+        "symfony/event-dispatcher": "^7.0",
+        "fakerphp/faker": "^1.23"
+    }
+}
