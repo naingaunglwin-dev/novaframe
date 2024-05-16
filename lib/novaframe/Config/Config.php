@@ -70,7 +70,7 @@ class Config
 
             unset($keys[0]);
 
-            $file = $this->path . '/' . $fileName . ".php";
+            $file = $this->path . $fileName . ".php";
 
             if (file_exists($file)) {
 
