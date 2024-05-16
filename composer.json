@@ -16,7 +16,8 @@
             "Nova\\": "lib/novaframe/"
         },
         "files": [
-            "lib/novaframe/Helpers/utility.php"
+            "lib/novaframe/Helpers/utility.php",
+            "lib/novaframe/Helpers/security.php"
         ]
     },
     "require": {
