@@ -80,11 +80,11 @@ class Container
      * Set the instance of the specified abstract type in the container.
      *
      * @param string      $abstract The abstract type or class name
-     * @param string|null $factory The concrete class
+     * @param mixed|null $factory The concrete class
      *
      * @return void
      */
-    private function setInstance(string $abstract, string $factory = null): void
+    private function setInstance(string $abstract, mixed $factory = null): void
     {
         if (!$this->isInstantiable($abstract)) {
             $this->instances[$abstract] = $factory ?? $abstract;
@@ -143,18 +143,8 @@ class Container
 
         $bind = $this->getBindingOfAbstract($abstract);
 
-        if ($bind['share'] === true) {
-            $this->setInstance($abstract, $bind['factory']);
-        }
-
-        if ($bind['share'] === true) {
-            if (!is_callable($this->getInstanceOfAbstract($abstract))) {
-                $factory = function () use ($abstract, $parameters) {
-                    return new $this->instances[$abstract](...$parameters);
-                };
-            } else {
-                $factory = $this->getInstanceOfAbstract($abstract);
-            }
+        if ($bind['share'] === true && $this->isInstantiable($abstract)) {
+            return $this->getInstanceOfAbstract($abstract);
         } else {
             if (!is_callable($bind['factory'])) {
                 $factory = $bind['factory'];
@@ -166,7 +156,13 @@ class Container
             }
         }
 
-        return call_user_func($factory, ...$parameters);
+        $output = fn () => call_user_func($factory, ...$parameters);
+
+        if ($bind['share'] === true) {
+            $this->setInstance($abstract, $output());
+        }
+
+        return $output();
     }
 
     /**
