@@ -11,11 +11,17 @@ if (!function_exists('baseUrl')) {
     {
         $request = \Nova\HTTP\IncomingRequest::createFromGlobals();
 
+        $baseUrl = env('APP_BASE_URL', $request->getBaseUrl());
+
+        if (str_ends_with($baseUrl, '/')) {
+            $baseUrl = substr($baseUrl, 0, -1);
+        }
+
         if (!str_starts_with($url, '/')) {
             $url = '/' . $url;
         }
 
-        return env('APP_BASE_URL', $request->getBaseUrl()) . $url;
+        return $baseUrl . $url;
     }
 }
 
