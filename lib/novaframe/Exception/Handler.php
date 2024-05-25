@@ -103,7 +103,6 @@ class Handler implements HandlerInterface
 
         $output = new ConsoleOutput();
 
-        $output->writeln('');
         $output->writeln("<error> Error </error> <fg=red>{$data['message']} in {$data['fileName']} on line {$data['line']}</>");
         $output->writeln('');
 
@@ -137,7 +136,7 @@ class Handler implements HandlerInterface
                 }
             }
 
-            $content .= $traces['function'] . '(' . implode(', ', $traces['args']) . ');';
+            $content .= $traces['function'] . "(\033[0;90m" . implode(', ', $traces['args']) . "\033[0m);";
 
             $indentation = str_repeat($firstCount, strlen((string)$count));
 
