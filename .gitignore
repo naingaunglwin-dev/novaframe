@@ -20,3 +20,6 @@ yarn.lock
 
 # Environment variables file
 .env
+
+# Temp files
+tmp/
