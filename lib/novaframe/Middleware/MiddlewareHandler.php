@@ -2,7 +2,7 @@
 
 namespace Nova\Middleware;
 
-use app\HTTP\Kernel;
+use App\HTTP\Kernel;
 use Nova\HTTP\IncomingRequestInterface;
 
 class MiddlewareHandler
