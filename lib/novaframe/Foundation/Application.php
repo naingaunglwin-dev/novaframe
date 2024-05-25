@@ -3,8 +3,9 @@
 namespace Nova\Foundation;
 
 use Nova\Container\Container;
-use Nova\HTTP\IncomingRequest;
-use Nova\HTTP\Response;
+use Nova\Event\Event;
+use Nova\Exception\HandlerInterface;
+use Nova\Route\RouteDispatcher;
 
 class Application extends Container
 {
@@ -26,6 +27,10 @@ class Application extends Container
     {
         $this->initialize();
 
+        $dotenv = $this->make('dotenv');
+
+        $dotenv->load();
+
         $config = $this->make('config');
 
         $this->locale = $config->get('config') ?? 'en';
@@ -44,12 +49,38 @@ class Application extends Container
     /**
      * Launch the application base on php environment
      *
-     * @param IncomingRequest $request
-     * @param Response        $response
+     * @param mixed $resource Resources to pass to web or cli application
+     *
+     * @return mixed
      */
-    public function launch(IncomingRequest $request, Response $response)
+    public function launch(mixed ...$resource)
     {
-        echo 'success';
+        $exception = $this->make(HandlerInterface::class);
+
+        $exception->set();
+
+        required(APP_PATH . 'Config/event.php');
+
+        Event::trigger('NovaFrame.system.before');
+
+        if ($this->isCLI()) {
+            Event::trigger('nova.cli');
+
+            $application = new \Nova\Console\Application(...$resource);
+
+            $application->commandLoader();
+
+            return $application->run();
+        }
+
+        // Continue process if environment is not from cli
+        Event::trigger('nova.web');
+
+        $dispatcher = RouteDispatcher::getInstance();
+
+        [$request, $response] = func_get_args();
+
+        return $dispatcher->dispatch($request);
     }
 
     /**

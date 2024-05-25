@@ -1,0 +1,59 @@
+#!/usr/bin/env php
+<?php
+
+/*
+ |-----------------------------------------------------------------------------------------
+ | Version Check
+ |-----------------------------------------------------------------------------------------
+ |
+ | This step verifies whether the PHP version meets the requirements of the framework.
+ | If the PHP version does not meet the required criteria, an error will be displayed,
+ | and the application will terminate to prevent potential compatibility issues and
+ | optimal performance.
+ |
+ */
+if (version_compare(phpversion(), '8.2', '<')) {
+    exit(
+        sprintf(
+            "PHP version %s or newer is required. Current version: %s",
+            '8.2',
+            phpversion()
+        )
+    );
+}
+
+/*
+ |------------------------------------------
+ | Define Root Path of your application
+ |------------------------------------------
+ */
+define('ROOT_PATH', __DIR__);
+
+/*
+ |----------------------------------
+ | Include Composer Autoload
+ |----------------------------------
+ */
+require_once ROOT_PATH . '/vendor/autoload.php';
+
+/*
+ |--------------------------------------------
+ | Bootstrap File
+ |--------------------------------------------
+ |
+ | Include the framework's bootstrap file
+ |
+ */
+$app = require_once ROOT_PATH . '/lib/novaframe/Bootstrap/app.php';
+
+/*
+ |-------------------------------------------------------
+ | Launch Application
+ |-------------------------------------------------------
+ |
+ | Launch NovaFrame Application with start time
+ |
+ */
+$app->launch(
+    microtime(true)
+);
