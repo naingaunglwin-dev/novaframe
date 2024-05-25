@@ -17,7 +17,9 @@
         },
         "files": [
             "lib/novaframe/Helpers/utility.php",
-            "lib/novaframe/Helpers/security.php"
+            "lib/novaframe/Helpers/security.php",
+            "lib/novaframe/Helpers/url.php",
+            "lib/novaframe/Helpers/file.php"
         ]
     },
     "require": {

@@ -45,3 +45,19 @@ if (!function_exists('config')) {
         return app('config')->get($key) ?? $default;
     }
 }
+
+if (!function_exists('lang')) {
+    /**
+     * Get a translated message from the language file.
+     *
+     * @param string $message The message key.
+     * @param mixed  ...$placeholder Placeholder values to replace in the message.
+     * @return mixed The translated message.
+     */
+    function lang(string $message, ...$placeholder): mixed
+    {
+        $language = new Nova\Language\Language();
+
+        return $language->getMessage($message, ...$placeholder);
+    }
+}
