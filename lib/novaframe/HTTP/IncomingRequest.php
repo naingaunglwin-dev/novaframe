@@ -26,7 +26,7 @@ class IncomingRequest extends Request implements IncomingRequestInterface
      */
     public function getHost(): ?string
     {
-        return $this->getFromServer('HTTP_HOST');
+        return $this->getFromHeader('HOST') ?? $this->getFromServer('HTTP_HOST');
     }
 
     /**
@@ -66,7 +66,16 @@ class IncomingRequest extends Request implements IncomingRequestInterface
      */
     public function getFullUrl(): ?string
     {
-        return $this->getScheme() . '://' . $this->getHost() . ($this->getPort() != 80 ? ':' . $this->getPort() : '') . $this->getFromServer('REQUEST_URI');
+        $scheme = $this->getScheme();
+        $host   = $this->getHost();
+
+        if ($scheme == 'http' && str_contains($host, 'localhost')) {
+            $h = explode(':', $host);
+
+            $host = $h[0];
+        }
+
+        return $scheme . '://' . $host . ($this->getPort() != 80 ? ':' . $this->getPort() : '') . $this->getFromServer('REQUEST_URI');
     }
 
     /**
@@ -84,6 +93,10 @@ class IncomingRequest extends Request implements IncomingRequestInterface
 
         if (!$query && str_ends_with($url, '/')) {
             $url = substr($url, 0, -1);
+        }
+
+        if (!str_starts_with($url, '/')) {
+            $url = "/$url";
         }
 
         return $url;
