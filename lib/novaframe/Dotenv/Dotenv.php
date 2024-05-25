@@ -194,9 +194,7 @@ class Dotenv
             }
         }
 
-        if (!isset($_SERVER['REQUEST_SCHEME'])) {
-            $contents['REQUEST_SCHEME'] = 'http';
-        }
+        $contents['REQUEST_SCHEME'] = $_SERVER['REQUEST_SCHEME'] ?? 'http';
 
         $this->store($contents);
 
