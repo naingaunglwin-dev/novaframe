@@ -643,6 +643,16 @@ class RouteDispatcher
     }
 
     /**
+     * Get defined routes list
+     *
+     * @return array
+     */
+    public function getRoutes(): array
+    {
+        return self::$routes;
+    }
+
+    /**
      * Get the singleton instance of the RouteDispatcher.
      *
      * @return RouteDispatcher The instance of RouteDispatcher.
