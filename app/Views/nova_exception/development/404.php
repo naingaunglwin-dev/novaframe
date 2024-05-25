@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
     <!-- Framework icon -->
-    <link rel="icon" href="<?php echo baseUrl('nova_icon/novaframe.header') ?>">
+    <link rel="icon" href="<?php echo baseUrl('nova_icon/novaframe.header.svg') ?>">
 
     <!-- Google Font (Inter) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -103,7 +103,7 @@
 
     <div class="logo-box">
         <a href="https://github.com/naingaunglwin-dev/novaframe" target="_blank"><i class="fa-regular fa-copyright"></i> NovaFrame 2024</a>
-        <img src="<?php echo baseUrl('nova_icon/novaframe') ?>" alt="Framework Logo">
+        <img src="<?php echo baseUrl('nova_icon/novaframe.svg') ?>" alt="Framework Logo">
     </div>
 </section>
 </body>
