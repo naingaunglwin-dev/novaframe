@@ -5,6 +5,7 @@ namespace Nova\Exception;
 use Nova\Dotenv\Dotenv;
 use Nova\Exception\Helper\ExceptionDisplay;
 use Nova\HTTP\IncomingRequest;
+use Nova\HTTP\Response;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Terminal;
 
@@ -81,7 +82,9 @@ class Handler implements HandlerInterface
 
         ob_clean();
 
-        echo $output;
+        $response = new Response($output, 500);
+
+        $response->send();
 
         return false;
     }

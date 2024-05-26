@@ -300,7 +300,7 @@ class RouteDispatcher
 
                 $resource = $resolver->resolve(fn ($file) => $this->render404('view', $file));
 
-                return $this->view->render($resource);
+                return (new Response($this->view->render($resource, [], true), 200))->send();
 
             case 'controller':
 
@@ -329,20 +329,20 @@ class RouteDispatcher
      *
      * @param $type
      * @param $resource
-     * @return string|null
+     * @return Response
      */
-    private function render404($type, $resource): ?string
+    private function render404($type, $resource): Response
     {
-        $response = new Response();
-
-        $response->setStatus(404);
-
         $environment = config('app.environment');
 
-        return $this->view->render("nova_exception*{$environment}*404", [
+        $output = $this->view->render("nova_exception*{$environment}*404", [
             'type'     => $type,
             'resource' => $resource,
-        ]);
+        ], true);
+
+        $response = new Response($output, 404);
+
+        return $response->send();
     }
 
     /**
