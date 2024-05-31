@@ -55,6 +55,11 @@ class MiddlewareHandler
         }
 
         foreach ($middlewares as $middleware) {
+
+            if (is_array($middleware)) {
+                return $this->doHandle($request, $middleware);
+            }
+
             if (is_string($middleware)) {
                 $middleware = new $middleware();
             }
