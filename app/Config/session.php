@@ -11,7 +11,7 @@ return [
      | It is the name of the session cookie that will be sent to the client's browser.
      |
      */
-    'name' => env('SESSION_NAME', '_echo_php_session'),
+    'name' => env('SESSION_NAME', '_nova_php_session'),
 
     /*
      |------------------------------------------------------------------------

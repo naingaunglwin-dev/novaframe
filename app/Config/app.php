@@ -28,7 +28,7 @@ return [
      |
      | The base URL of the application.
      | This URL is used as the base for generating absolute URLs within the application.
-     | It is typically set to the root URL of the application, including the protocol (e.g., http://localhost/echo-php/public).
+     | It is typically set to the root URL of the application, including the protocol (e.g., http://localhost/novaframe/public).
      |
      */
     'base_url' => env('APP_BASE_URL', 'http://localhost/novaframe/public'),
@@ -43,7 +43,11 @@ return [
      | It is used as a reference point for accessing files and directories within the project.
      |
      */
-    'base_path' => env('APP_BASE_PATH', 'C:/wamp64/www/novaframe'),
+    'base_path' => env('APP_BASE_PATH',
+        str_ends_with(ROOT_PATH, '/')
+            ? ROOT_PATH
+            : ROOT_PATH . "/"
+    ),
 
     /*
      |---------------------------------------------------------------------------------------------
