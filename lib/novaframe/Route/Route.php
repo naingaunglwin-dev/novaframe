@@ -67,6 +67,16 @@ class Route
 
         $this->dispatcher->add($from, $to, $method, $name, self::$isGroup, self::$prefix);
 
+        if (empty($from) || !str_starts_with($from, '/')) {
+            $from = '/' . $from;
+        }
+
+        if (strlen($from) !== 1 && str_ends_with($from, DIRECTORY_SEPARATOR)) {
+            $from = substr($from, 0, -1);
+        }
+
+        $from = trim($from);
+
         $this->current = [
             'route' => $from,
             'method' => $method
