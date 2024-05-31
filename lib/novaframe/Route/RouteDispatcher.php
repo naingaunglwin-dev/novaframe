@@ -103,7 +103,14 @@ class RouteDispatcher
      */
     public function add(string $from, string|array|callable $to, string|array $method, string $name = null, bool $isGroup = false, string $prefix = ''): void
     {
-        $this->doAdd($from, $to, $method, $name, $isGroup, $prefix);
+        $this->doAdd(
+            $from,
+            $to,
+            $this->convertMethodUppercase($method),
+            $name,
+            $isGroup,
+            $prefix
+        );
     }
 
     /**
@@ -116,6 +123,8 @@ class RouteDispatcher
      */
     public function addMiddleware(string|array $method, string|array|Middleware $middleware, string $from): void
     {
+        $method = $this->convertMethodUppercase($method);
+
         $this->checkMethod($method);
 
         if (is_array($method)) {
@@ -445,12 +454,12 @@ class RouteDispatcher
                 }
 
                 if (!in_array($m, $this->allowedMethods)) {
-                    throw new \RuntimeException("Unsupported HTTP method {$m} is used");
+                    throw new \RuntimeException("Unsupported HTTP method '{$m}' is used");
                 }
             }
         } else {
             if (!in_array($method, $this->allowedMethods)) {
-                throw new \RuntimeException("Unsupported HTTP method {$method} is used");
+                throw new \RuntimeException("Unsupported HTTP method '{$method}' is used");
             }
         }
     }
@@ -640,6 +649,31 @@ class RouteDispatcher
     public function getAllowedMethods(): array
     {
         return $this->allowedMethods;
+    }
+
+    /**
+     * Converts HTTP method(s) to uppercase.
+     *
+     * This method accepts a string or an array of strings representing HTTP methods
+     * and converts them to uppercase. If an array is provided, each element is processed
+     * recursively.
+     *
+     * @param string|array $method The HTTP method(s) to be converted to uppercase.
+     *                             It can be a single string or an array of strings.
+     * @return array|string        The converted HTTP method(s) in uppercase. Returns
+     *                             an array if the input was an array, otherwise returns a string.
+     */
+    private function convertMethodUppercase(string|array $method): array|string
+    {
+        if (is_array($method)) {
+            foreach ($method as $index => $m) {
+                $method[$index] = $this->convertMethodUppercase($method);
+            }
+
+            return $method;
+        }
+
+        return strtoupper($method);
     }
 
     /**
