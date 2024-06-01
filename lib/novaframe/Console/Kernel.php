@@ -2,6 +2,8 @@
 
 namespace Nova\Console;
 
+use Nova\Console\DefaultCommands\LogClear;
+
 class Kernel
 {
     public array $commands = [
@@ -9,6 +11,7 @@ class Kernel
         \Nova\Console\DefaultCommands\DisplayDefinedRoutes::class,
         \Nova\Console\DefaultCommands\GenerateSecretKey::class,
         \Nova\Console\DefaultCommands\CacheClear::class,
+        \Nova\Console\DefaultCommands\LogClear::class,
         \Nova\Console\DefaultCommands\CreateController::class,
         \Nova\Console\DefaultCommands\CreateMiddleware::class,
         \Nova\Console\DefaultCommands\CreateModel::class,
