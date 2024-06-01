@@ -3,23 +3,23 @@
 namespace Nova\Console\DefaultCommands;
 
 use Nova\Console\Command;
-use Symfony\Component\Console\Input\InputArgument;
+use Nova\Foundation\Log;
 
-class CacheClear extends Command
+class LogClear extends Command
 {
     /**
      * The name of the console command.
      *
      * @var string
      */
-    protected string $name = 'cache:clear';
+    protected string $name = 'log:clear';
 
     /**
      * The description of the console command.
      *
      * @var string
      */
-    protected string $description = 'Clear the cache files';
+    protected string $description = 'Clear the log files';
 
     /**
      * An array of command arguments.
@@ -67,7 +67,7 @@ class CacheClear extends Command
      *
      * @var string
      */
-    protected string $usage = 'cache:clear';
+    protected string $usage = 'log:clear';
 
     /**
      * Command Action
@@ -76,36 +76,10 @@ class CacheClear extends Command
      */
     public function action(): int
     {
-        $dir = TMP_PATH . 'cache';
-
-        if (!is_dir($dir)) {
-            return $this->alreadyCleared();
-        }
-
-        $caches = scandir($dir);
-
-        if (!$caches || count($caches) == 0 || count(array_diff($caches, ['.', '..'])) == 0) {
-            return $this->alreadyCleared();
-        }
-
-        $caches = array_diff($caches, ['.', '..', '.gitkeep']);
-
-        foreach ($caches as $cache) {
-            if (is_file("$dir/$cache")) {
-                unlink("$dir/$cache");
-            }
-        }
+        Log::clearLogs();
 
         $this->box('Success', 'white', 'green', ['bold']);
-        $this->success('Cache cleared');
-
-        return self::SUCCESS;
-    }
-
-    private function alreadyCleared(): int
-    {
-        $this->box('Success', 'white', 'green', ['bold']);
-        $this->success('Cache already cleared');
+        $this->success('Log cleared');
 
         return self::SUCCESS;
     }
