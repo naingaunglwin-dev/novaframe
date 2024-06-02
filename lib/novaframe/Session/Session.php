@@ -128,8 +128,12 @@ class Session implements SessionInterface
     /**
      * @inheritDoc
      */
-    public function set(string $key, mixed $value): void
+    public function set(string $key, mixed $value, bool $overwrite = false): void
     {
+        if (isset($this->global[$key]) && !$overwrite) {
+            return;
+        }
+
         $this->global[$key] = encrypt($value);
 
         $this->assignToGlobalSession();

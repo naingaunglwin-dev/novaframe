@@ -61,3 +61,40 @@ if (!function_exists('lang')) {
         return $language->getMessage($message, ...$placeholder);
     }
 }
+
+if (!function_exists('session')) {
+    /**
+     * Get or set a session value.
+     *
+     * If only the $key parameter is provided, retrieves the value associated with
+     * that key from the session. If both $key and $value parameters are provided,
+     * sets the value associated with the key in the session.
+     * If no parameters are provided, returns a new Session instance.
+     *
+     * Example usage:
+     * - session('user_id') // Get the value associated with the 'user_id' key
+     * - session('user_name', 'John Doe') // Set the 'user_name' key to 'John Doe'
+     * - session('user_name', 'David', true) // Overwrite the value of 'user_name' with 'David' if it exists
+     * - $session = session(); // Retrieve a new Session instance
+     *
+     * @param string|null $key       The key of the session value to get or set.
+     * @param mixed|null  $value     (optional) The value to set in the session.
+     * @param bool        $overwrite Whether to overwrite the value if it exists
+     *
+     * @return mixed If only $key is provided, returns the value associated with that key.
+     *               If both $key and $value are provided, returns void.
+     *               If no parameters are provided, returns a new instance of Session.
+     */
+    function session(string $key = null, mixed $value = null, bool $overwrite = false)
+    {
+        if ($key !== null) {
+            if ($value !== null) {
+                \Nova\Facade\Session::set($key, $value, $overwrite);
+            }
+
+            return \Nova\Facade\Session::get($key);
+        }
+
+        return new \Nova\Session\Session();
+    }
+}

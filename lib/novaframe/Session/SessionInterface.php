@@ -7,12 +7,13 @@ interface SessionInterface
     /**
      * Sets a session value.
      *
-     * @param string $key   The key of the session value.
-     * @param mixed  $value The value to be set.
+     * @param string $key       The key of the session value.
+     * @param mixed  $value     The value to be set.
+     * @param bool   $overwrite Whether to overwrite the value if it exists
      *
      * @return void
      */
-    public function set(string $key, mixed $value): void;
+    public function set(string $key, mixed $value, bool $overwrite = false): void;
 
     /**
      * Retrieves a session value.
