@@ -1,6 +1,6 @@
 <?php
 
-namespace Nova\Session;
+namespace Nova\Service\Session;
 
 interface SessionInterface
 {

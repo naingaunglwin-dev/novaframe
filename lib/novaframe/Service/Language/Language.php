@@ -8,7 +8,7 @@
  * @licence MIT
  */
 
-namespace Nova\Language;
+namespace Nova\Service\Language;
 
 class Language
 {

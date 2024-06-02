@@ -1,6 +1,6 @@
 <?php
 
-namespace Nova\Logger;
+namespace Nova\Service\Logger;
 
 class Log
 {

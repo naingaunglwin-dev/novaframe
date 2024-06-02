@@ -93,8 +93,8 @@ class Application extends Container
      */
     private function initialize()
     {
-        $this->add('dotenv', \Nova\Dotenv\Dotenv::class);
-        $this->add('config', \Nova\Config\Config::class);
+        $this->add('dotenv', \Nova\Service\Dotenv\Dotenv::class);
+        $this->add('config', \Nova\Service\Config\Config::class);
     }
 
     /**

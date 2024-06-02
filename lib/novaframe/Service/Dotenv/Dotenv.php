@@ -1,6 +1,6 @@
 <?php
 
-namespace Nova\Dotenv;
+namespace Nova\Service\Dotenv;
 
 use Nova\Exception\Exceptions\FileException;
 use Nova\Exception\Exceptions\FormatException;
@@ -93,8 +93,7 @@ class Dotenv
     public function getInGroup(string $group): ?array
     {
         if ($this->isLoaded === false) {
-            $class = \Nova\Dotenv\DotEnv::class;
-            throw new \BadMethodCallException("The {$class}::load must be invoked before calling the others method.");
+            throw new \BadMethodCallException(sprintf("The %s::load must be invoked before calling the others method.", $this::class));
         }
 
         return $this->group[$group] ?? null;
@@ -112,8 +111,7 @@ class Dotenv
     public function set(string $key, mixed $value, bool $overwrite = null): void
     {
         if ($this->isLoaded === false) {
-            $class  = DotEnv::class;
-            throw new \BadMethodCallException("The {$class}::load must be invoked before calling the 'set()' method.");
+            throw new \BadMethodCallException(sprintf("The %s::load must be invoked before calling the 'set()' method.", $this::class));
         }
 
         if ($overwrite === null) {

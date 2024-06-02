@@ -3,14 +3,14 @@
 namespace Nova\Facade;
 
 /**
- * @method static \Nova\Session\Session set(string $key, mixed $value, bool $overwrite = false)
- * @method static \Nova\Session\Session get(string $key, mixed $default = null)
- * @method static \Nova\Session\Session getAll()
- * @method static \Nova\Session\Session destroy(string $key)
- * @method static \Nova\Session\Session destroyAll()
- * @method static \Nova\Session\Session isSecure()
- * @method static \Nova\Session\Session setFlashMessage(string $key, mixed $value)
- * @method static \Nova\Session\Session getFlashMessage(string $key)
+ * @method static \Nova\Service\Session\Session set(string $key, mixed $value, bool $overwrite = false)
+ * @method static \Nova\Service\Session\Session get(string $key, mixed $default = null)
+ * @method static \Nova\Service\Session\Session getAll()
+ * @method static \Nova\Service\Session\Session destroy(string $key)
+ * @method static \Nova\Service\Session\Session destroyAll()
+ * @method static \Nova\Service\Session\Session isSecure()
+ * @method static \Nova\Service\Session\Session setFlashMessage(string $key, mixed $value)
+ * @method static \Nova\Service\Session\Session getFlashMessage(string $key)
  */
 class Session extends Facade
 {
@@ -21,7 +21,7 @@ class Session extends Facade
      */
     protected static function defineClass(): string
     {
-        return "\Nova\Session\Session";
+        return \Nova\Service\Session\Session::class;
     }
 
     /**

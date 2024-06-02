@@ -56,7 +56,7 @@ if (!function_exists('lang')) {
      */
     function lang(string $message, ...$placeholder): mixed
     {
-        $language = new Nova\Language\Language();
+        $language = new \Nova\Service\Language\Language();
 
         return $language->getMessage($message, ...$placeholder);
     }
@@ -95,6 +95,25 @@ if (!function_exists('session')) {
             return \Nova\Facade\Session::get($key);
         }
 
-        return new \Nova\Session\Session();
+        return new \Nova\Service\Session\Session();
+    }
+}
+
+if (!function_exists('service')) {
+    /**
+     * Get a service instance.
+     *
+     * Example usage:
+     * - service('config') // Get the Config service
+     * - service('session', $param1, $param2) // Get the Session service with parameters
+     *
+     * @param string $service    The name of the service to retrieve.
+     * @param mixed  ...$parameters Optional parameters to pass to the service constructor.
+     *
+     * @return mixed The service instance.
+     */
+    function service(string $service, mixed ...$parameters): mixed
+    {
+        return \Nova\Facade\Service::get($service, ...$parameters);
     }
 }

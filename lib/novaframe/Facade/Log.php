@@ -3,12 +3,12 @@
 namespace Nova\Facade;
 
 /**
- * @method static \Nova\Logger\Log write(string $message, string $level = 'DEBUG', bool $format = true)
- * @method static \Nova\Logger\Log fwrite(string $message, string $level = 'DEBUG', bool $format = true)
- * @method static \Nova\Logger\Log custom(string $message, string $level = 'DEBUG', bool $force = false, bool $format = true)
- * @method static \Nova\Logger\Log setLevel(string $level)
- * @method static \Nova\Logger\Log clearLogs()
- * @method static \Nova\Logger\Log read(string $filename)
+ * @method static \Nova\Service\Logger\Log write(string $message, string $level = 'DEBUG', bool $format = true)
+ * @method static \Nova\Service\Logger\Log fwrite(string $message, string $level = 'DEBUG', bool $format = true)
+ * @method static \Nova\Service\Logger\Log custom(string $message, string $level = 'DEBUG', bool $force = false, bool $format = true)
+ * @method static \Nova\Service\Logger\Log setLevel(string $level)
+ * @method static \Nova\Service\Logger\Log clearLogs()
+ * @method static \Nova\Service\Logger\Log read(string $filename)
  */
 class Log extends Facade
 {
