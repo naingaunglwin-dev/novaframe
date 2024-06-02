@@ -73,6 +73,8 @@ class Application extends Container
             return $application->run();
         }
 
+        required(APP_PATH . 'Routes/web.php');
+
         // Continue process if environment is not from cli
         Event::trigger('nova.web');
 

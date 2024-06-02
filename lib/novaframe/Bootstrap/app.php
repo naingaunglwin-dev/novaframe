@@ -20,6 +20,19 @@ if (!defined('BOOTSTRAP_PATH')) {
     define('BOOTSTRAP_PATH', str_replace('\\', '/', dirname(__DIR__)));
 }
 
+/*
+ |----------------------------------------------------------------------------------------
+ | Set Default Timezone
+ |----------------------------------------------------------------------------------------
+ |
+ | This line of code sets the default timezone for the application based on the value
+ | retrieved from the application configuration. If the timezone is not specified in
+ | the configuration, it defaults to UTC timezone. This ensures that the application
+ | operates with a consistent timezone setting.
+ |
+ */
+date_default_timezone_set(config('app.timezone', 'UTC'));
+
 $app = \Nova\Foundation\Application::getInstance();
 
 /*
@@ -38,7 +51,5 @@ $app->singleton(
     Nova\Exception\HandlerInterface::class,
     Nova\Exception\Handler::class
 );
-
-require_once APP_PATH . 'Routes/web.php';
 
 return $app;
