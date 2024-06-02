@@ -1,6 +1,6 @@
 <?php
 
-namespace Nova\Foundation;
+namespace Nova\Facade;
 
 use BadMethodCallException;
 use Nova\Container\Container;

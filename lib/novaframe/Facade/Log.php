@@ -1,6 +1,6 @@
 <?php
 
-namespace Nova\Foundation;
+namespace Nova\Facade;
 
 /**
  * @method static \Nova\Logger\Log write(string $message, string $level = 'DEBUG', bool $format = true)

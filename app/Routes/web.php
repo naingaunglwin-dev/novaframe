@@ -1,3 +1,3 @@
 <?php
 
-use Nova\Foundation\Route;
+use Nova\Facade\Route;

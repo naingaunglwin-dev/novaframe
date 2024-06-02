@@ -3,7 +3,7 @@
 namespace Nova\Console\DefaultCommands;
 
 use Nova\Console\Command;
-use Nova\Foundation\Log;
+use Nova\Facade\Log;
 
 class LogClear extends Command
 {
