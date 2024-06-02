@@ -3,7 +3,7 @@
 namespace Nova\Facade;
 
 /**
- * @method static
+ * @method static \Nova\Service\Language\Language getMessage(string $key, string ...$placeholder)
  */
 class Language extends Facade
 {
