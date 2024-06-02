@@ -19,7 +19,7 @@ class Route extends Facade
      */
     protected static function defineClass(): string
     {
-        return '\Nova\Route\Route';
+        return \Nova\Route\Route::class;
     }
 
     /**
