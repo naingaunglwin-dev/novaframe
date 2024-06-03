@@ -74,6 +74,8 @@ class View
         }
 
         $this->path = $path !== '' ? $path : $pathFromConfig;
+
+        $this->path = str_replace("/", "\\", $this->path);
     }
 
     /**
@@ -102,7 +104,9 @@ class View
                 $file = substr($file, 1);
             }
 
-            $file = str_replace('*', '/', $file);
+            $file = str_replace('*', '\\', $file);
+
+            $file = str_replace("/", "\\", $file);
 
             $file = str_replace($this->path, '', $file);
 
@@ -134,6 +138,8 @@ class View
             $tmp = trim($tmp);
 
             $tmp = str_replace('*', '/', $tmp);
+
+            $tmp = str_replace('/', '\\', $tmp);
 
             $temps[] = $tmp;
         }
