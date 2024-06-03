@@ -170,9 +170,16 @@
             color: grey;
         }
 
+        footer {
+            width: 100%;
+            background: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-top: 10px;
+        }
+
         div.logo-box {
-            position: absolute;
-            right: 10px;
             display: flex;
             align-items: center;
         }
@@ -217,9 +224,11 @@
     </div>
 </section>
 
-<div class="logo-box">
-    <a href="https://github.com/naingaunglwin-dev/novaframe" target="_blank"><i class="fa-regular fa-copyright"></i> NovaFrame 2024</a>
-    <img src="<?php echo ExceptionDisplay::getBaseUrl('nova_icon/novaframe.svg'); ?>" alt="Framework Logo">
-</div>
+<footer>
+    <div class="logo-box">
+        <a href="https://github.com/naingaunglwin-dev/novaframe" target="_blank"><i class="fa-regular fa-copyright"></i> NovaFrame 2024</a>
+        <img src="<?php echo ExceptionDisplay::getBaseUrl('nova_icon/novaframe.svg'); ?>" alt="Framework Logo">
+    </div>
+</footer>
 </body>
 </html>
