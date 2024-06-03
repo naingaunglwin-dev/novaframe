@@ -3,10 +3,10 @@
 namespace Nova\Route;
 
 use InvalidArgumentException;
-use Nova\Container\Container;
 use Nova\HTTP\DynamicParameters;
 use Nova\HTTP\IncomingRequestInterface;
 use Nova\HTTP\Response;
+use Nova\HTTP\ResponseInterface;
 use Nova\Middleware\Middleware;
 use Nova\Middleware\MiddlewareHandler;
 use Nova\View\View;
@@ -50,6 +50,11 @@ class RouteDispatcher
      * @var DynamicParameters
      */
     private DynamicParameters $dynamicParameters;
+
+    /**
+     * @var Response|null
+     */
+    private ?Response $response;
 
     /**
      * @var View
@@ -197,8 +202,10 @@ class RouteDispatcher
      *
      * @return mixed The result of the callback/controller execution.
      */
-    public function dispatch(IncomingRequestInterface $request): mixed
+    public function dispatch(IncomingRequestInterface $request, ResponseInterface $response): mixed
     {
+        $this->response = $response;
+
         $middleware = new MiddlewareHandler();
 
         $request = $middleware->handleDefault($request);
@@ -309,7 +316,10 @@ class RouteDispatcher
 
                 $resource = $resolver->resolve(fn ($file) => $this->render404('view', $file));
 
-                return (new Response($this->view->render($resource, [], true), 200))->send();
+                return $this->response->setBody(
+                    $this->view->render($resource, [], true)
+                )->setStatus(200)
+                ->send();
 
             case 'controller':
 

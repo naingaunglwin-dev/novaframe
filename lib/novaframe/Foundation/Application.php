@@ -82,7 +82,7 @@ class Application extends Container
 
         [$request, $response] = func_get_args();
 
-        return $dispatcher->dispatch($request);
+        return $dispatcher->dispatch($request, $response);
     }
 
     /**
