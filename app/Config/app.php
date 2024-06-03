@@ -86,6 +86,20 @@ return [
     'key' => env('APP_KEY'),
 
     /*
+     |----------------------------------------------------------------------------------------
+     | Error Reporting Level
+     |----------------------------------------------------------------------------------------
+     |
+     | Define the error reporting level for different environments.
+     | This setting controls which PHP errors and warnings are displayed or logged.
+     |
+     */
+    'error_reporting_level' => [
+        'production'  => E_WARNING,
+        'development' => E_ALL
+    ],
+
+    /*
      |-----------------------------------------------------------------------------------------------------
      | Asset Version
      |-----------------------------------------------------------------------------------------------------

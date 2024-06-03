@@ -32,7 +32,9 @@ class ExceptionDisplay
             return self::return($messages[0]);
         }
 
-        return self::return(self::$messages['message']);
+        return self::return(
+            sprintf("<span class='severity'>%s</span>%s", self::$messages['severity'], self::$messages['message'])
+        );
     }
 
     /**
@@ -65,7 +67,7 @@ class ExceptionDisplay
         foreach (self::$messages['traceMessages'] as $file => $data) {
             foreach ($data as $line => $content) {
                 echo "<div class='trace-messages-box'>";
-                echo "<h3>" . $file . " on line " . $line . "</h3>";
+                echo "<p class='error-title'>" . $file . " on line " . $line . "</p>";
                 echo "<div class='error-code'>";
 
                 $icon = ExceptionDisplay::getIcon($file);
@@ -76,7 +78,13 @@ class ExceptionDisplay
                     $txt = "<span class='code-line ";
                     $txt .= $key == $line ? 'error-line' : '';
 
-                    $msg = str_replace(' ', '<span style="color:grey;opacity:0.4"> · </span>', $msg);
+                    $trimed = str_replace(' ', '', $msg);
+
+                    $msg = str_replace(' ', '<span style="color:#a1a1a1;opacity:0.4"> · </span>', $msg);
+
+                    if (str_starts_with($trimed, "//")) {
+                        $msg = '<span class="comment">' . $msg .'</span>';
+                    }
 
                     $msg = ExceptionDisplay::highlightPhpKeywords($msg);
 
@@ -104,7 +112,7 @@ class ExceptionDisplay
     {
         $line = ExceptionDisplay::getLine();
 
-        echo "<h3>" . ExceptionDisplay::getFile() . " on line " . $line . "</h3>";
+        echo "<p class='error-title'>" . ExceptionDisplay::getFile() . " on line " . $line . "</p>";
 
         echo "<div class='error-code'>";
 
@@ -116,7 +124,13 @@ class ExceptionDisplay
             $txt = "<span class='code-line ";
             $txt .= $key == $line ? 'error-line' : '';
 
-            $message = str_replace(' ', '<span style="color:grey;opacity:0.4"> · </span>', $message);
+            $trimed = str_replace(' ', '', $message);
+
+            $message = str_replace(' ', '<span style="color:#a1a1a1;opacity:0.4"> · </span>', $message);
+
+            if (str_starts_with($trimed, "//")) {
+                $message = '<span class="comment">' . $message .'</span>';
+            }
 
             $message = ExceptionDisplay::highlightPhpKeywords($message);
 
@@ -185,6 +199,10 @@ class ExceptionDisplay
      */
     private static function setColorToVariable(string $code): string
     {
+        if (str_contains($code, '<span class="comment">')) {
+            return  $code;
+        }
+
         $pattern = '/(\$[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)/';
 
         // Use preg_replace_callback to replace all matches with the span tag
@@ -202,6 +220,10 @@ class ExceptionDisplay
      */
     private static function highlightPhpKeywords(string $code): string
     {
+        if (str_contains($code, '<span class="comment">')) {
+            return  $code;
+        }
+
         $php_keywords = array('abstract', 'and', 'array', 'as', 'break', 'callable', 'case', 'catch', 'class', 'clone', 'const', 'continue', 'declare', 'default', 'do', 'echo', 'else', 'elseif', 'empty', 'enddeclare', 'endfor', 'endforeach', 'endif', 'endswitch', 'endwhile', 'eval', 'exit', 'extends', 'final', 'finally', 'for', 'foreach', 'function', 'fn', 'global', 'goto', 'if', 'implements', 'include', 'include_once', 'instanceof', 'insteadof', 'interface', 'isset', 'list', 'namespace', 'new', 'or', 'print', 'private', 'protected', 'public', 'require', 'require_once', 'return', 'static', 'switch', 'throw', 'trait', 'try', 'unset', 'use', 'var', 'while', 'xor', 'yield');
 
         // Constructing the regex pattern
@@ -219,6 +241,10 @@ class ExceptionDisplay
      */
     private static function highlightFunctionsAndMethods(string $code): string
     {
+        if (str_contains($code, '<span class="comment">')) {
+            return  $code;
+        }
+
         $pattern = '/\b(?:function\s+([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)\s*\()|' .
             '(?:(?<=->|\b)\s*([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)\s*(?=\())|' .
             '(?:(?<=::|\b)\s*([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)(?=\s*\())/';

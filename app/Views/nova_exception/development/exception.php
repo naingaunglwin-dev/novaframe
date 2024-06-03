@@ -25,8 +25,10 @@
         body {
             margin: 0;
             padding: 0;
-            background: aliceblue;
+            background-image: linear-gradient(to right top, #2a2a2a, #23212f, #1a1833, #0f0f37, #01013b);
+            background-size: cover;
             font-family: "Inter", sans-serif;
+            color: white;
         }
 
         ::-webkit-scrollbar {
@@ -43,27 +45,42 @@
             border-radius: 10px;
         }
 
-        section div.header {
-            position: fixed;
-            top: 0;
-            width: 98.7%;
-            background: white;
-            border-bottom-left-radius: 12px;
-            border-bottom-right-radius: 12px;
-            padding: 10px;
-            z-index: 9999;
-            opacity: 0.9;
+        span.severity {
+            background: #e74c4c;
+            opacity: 0.8;
+            padding: 7px 10px;
+            font-size: 13pt;
+            border-radius: 2px;
         }
 
         section div.container {
             padding: 5px 25px;
             max-width: 1400px;
-            margin: 120px auto;
+            margin: 40px auto;
             margin-bottom: 0!important;
         }
 
-        div.current-error-title {
-            margin-bottom: 60px;
+        div.box {
+            border-radius: 6px;
+            background: #333333;
+            overflow: hidden;
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 80px;
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        div.box > p {
+            display: flex;
+            justify-content: center;
+            grid-gap: 25px;
+            align-items: center;
+            width: 100%;
+            padding: 0 15px;
         }
 
         div.backtrace {
@@ -82,7 +99,7 @@
             position: absolute;
             right: 10px;
             top: 10px;
-            background: #f6f6f6;
+            background: #000000;
             padding: 2px;
             border-radius: 4px;
             z-index: 99;
@@ -91,12 +108,21 @@
         div.error-code {
             position: relative;
             padding: 20px 0;
-            border-radius: 9px;
-            background: white;
+            border-radius: 6px;
+            background: #333131;
             overflow-x: auto;
             white-space: nowrap;
             width: 100%;
             line-height: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        p.error-title {
+            font-size: 12.6pt;
+        }
+
+        div.error-code > span {
+            width: inherit;
         }
 
         div.error-code > span.code-line p {
@@ -109,7 +135,6 @@
         }
 
         div.error-code > span.error-line p {
-            color: black;
             border-radius: 6px;
             opacity: 1!important;
         }
@@ -122,7 +147,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: #ff1717 !important;
+            background: #c94040 !important;
             border-radius: 6px;
             z-index: 1;
             opacity: 0.4;
@@ -139,6 +164,10 @@
 
         span.keyword {
             color: tomato;
+        }
+
+        span.comment {
+            color: grey;
         }
 
         div.logo-box {
@@ -169,13 +198,10 @@
 </head>
 <body>
 <section>
-    <div class="header">
-        <h1><i class="fa-solid fa-circle-exclamation"></i> <i class="fa-solid fa-minus"></i> <?php echo ExceptionDisplay::getMessage(false) ?></h1>
-    </div>
 
     <div class="container">
-        <div class="current-error-title">
-            <p><b>Message</b> <i class="fa-solid fa-chevron-right"></i> <?php echo ExceptionDisplay::getMessage() . ' in ' . ExceptionDisplay::getFile() . ' on line ' . ExceptionDisplay::getLine() ?></p>
+        <div class="box">
+            <p><?php echo ExceptionDisplay::getMessage() . ' in ' . ExceptionDisplay::getFile() . ' on line ' . ExceptionDisplay::getLine() ?></p>
         </div>
         <div class="current-error-code">
             <?php ExceptionDisplay::displayCurrentErrorMessage(); ?>
