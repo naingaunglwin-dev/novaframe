@@ -41,17 +41,22 @@ class Application extends SymfonyApplication
 
         $files = scandir($path);
 
+        $files = $this->skipFiles($files, ['.', '..', '.gitkeep']);
+
         if (!empty($files)) {
-            $files = $this->skipFiles($files, ['.', '..']);
 
             foreach ($files as $file) {
                 $name = pathinfo($file, PATHINFO_FILENAME);
 
-                $class = $namespace . $name;
-                $class = new $class();
+                $extension = pathinfo($file, PATHINFO_EXTENSION);
 
-                if ($class instanceof Command) {
-                    $this->add($class);
+                if ($extension == 'php') {
+                    $class = $namespace . $name;
+                    $class = new $class();
+
+                    if ($class instanceof Command) {
+                        $this->add($class);
+                    }
                 }
             }
         }
