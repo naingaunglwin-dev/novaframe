@@ -260,6 +260,10 @@ class Handler implements HandlerInterface
             if (is_array($arg)) {
                 $result .= '[' . $this->formatArgs($arg) . '], ';
             } else {
+                if (is_object($arg)) {
+                    $arg = $arg::class;
+                }
+
                 $result .= "$arg, ";
             }
         }
