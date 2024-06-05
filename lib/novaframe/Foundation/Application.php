@@ -5,6 +5,7 @@ namespace Nova\Foundation;
 use Nova\Container\Container;
 use Nova\Event\Event;
 use Nova\Exception\HandlerInterface;
+use Nova\Facade\Bootstrap;
 use Nova\Route\RouteDispatcher;
 
 class Application extends Container
@@ -26,14 +27,6 @@ class Application extends Container
     public function __construct()
     {
         $this->initialize();
-
-        $dotenv = $this->make('dotenv');
-
-        $dotenv->load();
-
-        $config = $this->make('config');
-
-        $this->locale = $config->get('config') ?? 'en';
     }
 
     /**
@@ -59,6 +52,11 @@ class Application extends Container
 
         $exception->set();
 
+        required(APP_PATH . 'Bootstrap/bootstrap.php');
+
+        Bootstrap::run('before')
+            ->run('with');
+
         required(APP_PATH . 'Config/event.php');
 
         Event::trigger('NovaFrame.system.before');
@@ -72,8 +70,6 @@ class Application extends Container
 
             return $application->run();
         }
-
-        required(APP_PATH . 'Routes/web.php');
 
         // Continue process if environment is not from cli
         Event::trigger('nova.web');
