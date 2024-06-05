@@ -71,7 +71,7 @@ class Dotenv
     public function get(string $key): mixed
     {
         if ($this->isLoaded === false) {
-            throw new \BadMethodCallException("The 'load()' method must be invoked before calling the 'set()' method.");
+            $this->load();
         }
 
         if (isset($this->global[$key])) {
