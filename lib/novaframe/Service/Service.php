@@ -7,11 +7,12 @@ use Nova\Container\Container;
 class Service
 {
     private array $list = [
-        'config'   => \Nova\Service\Config\Config::class,
-        'dotenv'   => \Nova\Service\Dotenv\Dotenv::class,
-        'language' => \Nova\Service\Language\Language::class,
-        'log'      => \Nova\Service\Logger\Log::class,
-        'session'  => \Nova\Service\Session\Session::class
+        'config'    => \Nova\Service\Config\Config::class,
+        'dotenv'    => \Nova\Service\Dotenv\Dotenv::class,
+        'language'  => \Nova\Service\Language\Language::class,
+        'log'       => \Nova\Service\Logger\Log::class,
+        'session'   => \Nova\Service\Session\Session::class,
+        'bootstrap' => \Nova\Service\Bootstrap\Bootstrap::class
     ];
 
     private Container $container;
