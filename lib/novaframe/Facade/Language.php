@@ -14,7 +14,7 @@ class Language extends Facade
      */
     protected static function defineClass(): string
     {
-        return \Nova\Service\Language\Language::class;
+        return service('language')::class;
     }
 
     /**

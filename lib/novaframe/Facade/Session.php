@@ -21,7 +21,7 @@ class Session extends Facade
      */
     protected static function defineClass(): string
     {
-        return \Nova\Service\Session\Session::class;
+        return service('session')::class;
     }
 
     /**

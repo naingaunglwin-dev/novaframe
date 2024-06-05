@@ -19,7 +19,7 @@ class Log extends Facade
      */
     protected static function defineClass(): string
     {
-        return \Nova\Service\Logger\Log::class;
+        return service('log')::class;
     }
 
     /**
