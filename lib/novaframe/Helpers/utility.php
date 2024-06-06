@@ -115,3 +115,17 @@ if (!function_exists('service')) {
         return \Nova\Facade\Service::get($service, ...$parameters);
     }
 }
+
+if (!function_exists('resolver')) {
+    /**
+     * Creates a new instance of ResolveDependencies.
+     *
+     * @param string|object|null $class The class name or object to resolve dependencies for.
+     * @return \Nova\Helpers\Modules\ResolveDependencies The ResolveDependencies instance.
+     * @throws InvalidArgumentException If the class does not exist.
+     */
+    function resolver(string|object $class = null): \Nova\Helpers\Modules\ResolveDependencies
+    {
+        return new \Nova\Helpers\Modules\ResolveDependencies($class);
+    }
+}
