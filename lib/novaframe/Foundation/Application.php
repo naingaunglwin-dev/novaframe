@@ -79,11 +79,7 @@ class Application extends Container
 
         [$request, $response] = func_get_args();
 
-        $time = microtime(true);
-
         $result = $dispatcher->dispatch($request, $response);
-
-        var_dump("Dispatch Time: " . (microtime(true) - $time));
 
         return $result;
     }
