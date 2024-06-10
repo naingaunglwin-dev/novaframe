@@ -33,6 +33,40 @@ class Bootstrap
     }
 
     /**
+     * Register a process to run for web requests.
+     *
+     * This method allows you to register a callback that will be executed specifically
+     * for web-based requests. This can be useful for initializing resources or
+     * performing tasks that are only relevant in a web context.
+     *
+     * @param callable $callback The callback function to execute for web requests.
+     * @return Bootstrap Returns the instance of the Bootstrap class for method chaining.
+     */
+    public function web(callable $callback): Bootstrap
+    {
+        $this->save('web', $callback);
+
+        return $this;
+    }
+
+    /**
+     * Register a process to run for CLI requests.
+     *
+     * This method allows you to register a callback that will be executed specifically
+     * for command-line interface (CLI) requests. This can be useful for initializing
+     * resources or performing tasks that are only relevant in a CLI context.
+     *
+     * @param callable $callback The callback function to execute for CLI requests.
+     * @return self Returns the instance of the Bootstrap class for method chaining.
+     */
+    public function cli(callable $callback): Bootstrap
+    {
+        $this->save('cli', $callback);
+
+        return $this;
+    }
+
+    /**
      * Autoload files.
      *
      * @param array|string $files
@@ -67,19 +101,6 @@ class Bootstrap
     }
 
     /**
-     * Register a process to run with other stages.
-     *
-     * @param callable $process
-     * @return Bootstrap
-     */
-    public function with(callable $process): Bootstrap
-    {
-        $this->save('with', $process);
-
-        return $this;
-    }
-
-    /**
      * Save a process to a specific stage.
      *
      * @param string $stage
@@ -105,13 +126,19 @@ class Bootstrap
 
             foreach ($processes as $process) {
                 if (is_callable($process)) {
-                    $process();
+                    resolver()->callback($process);
                 }
             }
         }
 
-        if ($stage !== 'with' && !isset(self::$process['with'])) {
-            $this->run('with');
+        if (php_sapi_name() === 'cli' && $stage !== 'cli') {
+            if (isset(self::$process['cli'])) {
+                $this->run('cli');
+            }
+        } else {
+            if (isset(self::$process['web']) && $stage !== 'web' && php_sapi_name() !== 'cli') {
+                $this->run('web');
+            }
         }
 
         if (!empty($autoload = $this->getProcess('autoload'))) {

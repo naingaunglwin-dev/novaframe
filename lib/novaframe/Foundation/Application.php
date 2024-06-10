@@ -54,14 +54,15 @@ class Application extends Container
 
         required(APP_PATH . 'Bootstrap/bootstrap.php');
 
-        Bootstrap::run('before')
-            ->run('with');
+        // Run bootstrapping before stage
+        Bootstrap::run('before');
 
         required(APP_PATH . 'Config/event.php');
 
         Event::trigger('NovaFrame.system.before');
 
         if ($this->isCLI()) {
+
             Event::trigger('nova.cli');
 
             $application = new \Nova\Console\Application(...$resource);
@@ -78,7 +79,13 @@ class Application extends Container
 
         [$request, $response] = func_get_args();
 
-        return $dispatcher->dispatch($request, $response);
+        $time = microtime(true);
+
+        $result = $dispatcher->dispatch($request, $response);
+
+        var_dump("Dispatch Time: " . (microtime(true) - $time));
+
+        return $result;
     }
 
     /**

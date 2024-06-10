@@ -6,7 +6,8 @@ namespace Nova\Facade;
  * @method static \Nova\Service\Bootstrap\Bootstrap before(callable $process)
  * @method static \Nova\Service\Bootstrap\Bootstrap after(callable $process)
  * @method static \Nova\Service\Bootstrap\Bootstrap autoload(array|string $files)
- * @method static \Nova\Service\Bootstrap\Bootstrap with(callable $process)
+ * @method static \Nova\Service\Bootstrap\Bootstrap web(callable $process)
+ * @method static \Nova\Service\Bootstrap\Bootstrap cli(callable $process)
  * @method static \Nova\Service\Bootstrap\Bootstrap getProcess(string $process)
  * @method static \Nova\Service\Bootstrap\Bootstrap run(string $stage)
  */
