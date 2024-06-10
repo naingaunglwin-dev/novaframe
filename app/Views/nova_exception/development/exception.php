@@ -28,7 +28,7 @@
             background-color: #1d2023;
             background-size: cover;
             font-family: "Inter", sans-serif;
-            color: white;
+            color: #bdbdbd;
         }
 
         ::-webkit-scrollbar {
@@ -51,6 +51,7 @@
             padding: 7px 10px;
             font-size: 13pt;
             border-radius: 2px;
+            color: white;
         }
 
         section div.container {
