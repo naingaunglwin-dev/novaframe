@@ -256,22 +256,24 @@ class Handler implements HandlerInterface
     {
         $result = '';
 
-        foreach ($args as $arg) {
-            if (is_array($arg)) {
-                $result .= '[' . $this->formatArgs($arg) . '], ';
-            } else {
-                if (is_object($arg)) {
-                    $arg = $arg::class;
-                }
+        if (count($args) > 5) {
+            $result = "Array...";
+        } else {
+            foreach ($args as $arg) {
+                if (is_array($arg)) {
+                    $result .= '[' . $this->formatArgs($arg) . '], ';
+                } else {
+                    if (is_object($arg)) {
+                        $arg = $arg::class;
+                    }
 
-                $result .= "$arg, ";
+                    $result .= "$arg, ";
+                }
             }
         }
 
         // Remove the trailing comma and space if present
-        $result = str_ends_with($result, ", ") ? substr($result, 0, -2) : $result;
-
-        return $result;
+        return str_ends_with($result, ", ") ? substr($result, 0, -2) : $result;
     }
 
     /**
@@ -330,7 +332,7 @@ class Handler implements HandlerInterface
                 }
             }
 
-            $content .= $traces['function'] . "(\033[0;90m" . implode(', ', $traces['args']) . "\033[0m);";
+            $content .= $traces['function'] . "(\033[0;90m" . $this->formatArgs($traces['args']) . "\033[0m);";
 
             $indentation = str_repeat($firstCount, strlen((string)$count));
 
