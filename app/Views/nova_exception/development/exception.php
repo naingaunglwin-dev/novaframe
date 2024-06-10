@@ -9,7 +9,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
     <!-- Framework icon -->
-    <link rel="icon" href="<?php echo ExceptionDisplay::getBaseUrl('/nova_icon/novaframe.header.svg'); ?>">
+    <link rel="icon" href="<?php echo ExceptionDisplay::getBaseUrl('/nova_icon/favicon.png'); ?>" sizes="32x32">
 
     <!-- Google Font (Inter) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -189,8 +189,8 @@
         }
 
         div.logo-box img {
-            width: 40px;
-            height: 40px;
+            width: 38px;
+            height: 38px;
             margin-left: 10px;
             margin-bottom: 10px;
         }
@@ -227,7 +227,7 @@
 <footer>
     <div class="logo-box">
         <a href="https://github.com/naingaunglwin-dev/novaframe" target="_blank"><i class="fa-regular fa-copyright"></i> NovaFrame 2024</a>
-        <img src="<?php echo ExceptionDisplay::getBaseUrl('nova_icon/novaframe.svg'); ?>" alt="Framework Logo">
+        <img src="<?php echo ExceptionDisplay::getBaseUrl('nova_icon/icon.png'); ?>" alt="Framework Logo">
     </div>
 </footer>
 </body>
