@@ -25,7 +25,7 @@
         body {
             margin: 0;
             padding: 0;
-            background-image: linear-gradient(to right top, #2a2a2a, #23212f, #1a1833, #0f0f37, #01013b);
+            background-color: #1d2023;
             background-size: cover;
             font-family: "Inter", sans-serif;
             color: white;
@@ -62,7 +62,7 @@
 
         div.box {
             border-radius: 6px;
-            background: #333333;
+            background: #252525;
             overflow: hidden;
             width: 100%;
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -109,7 +109,7 @@
             position: relative;
             padding: 20px 0;
             border-radius: 6px;
-            background: #333131;
+            background: #252525;
             overflow-x: auto;
             white-space: nowrap;
             width: 100%;
