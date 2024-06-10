@@ -40,11 +40,11 @@ class Container
      * Register a normal binding with the container
      *
      * @param string      $abstract The abstract type or class name
-     * @param string|callable|null $factory The concrete class
+     * @param string|callable|object|null $factory The concrete class
      *
      * @return void
      */
-    public function add(string $abstract, string|callable $factory = null): void
+    public function add(string $abstract, string|callable|object $factory = null): void
     {
         $this->bind($abstract, $factory);
     }
@@ -53,12 +53,12 @@ class Container
      * Bind a concrete implementation or factory function to an abstract type in the container
      *
      * @param string      $abstract
-     * @param string|callable|null $factory
+     * @param string|callable|object|null $factory
      * @param bool        $share
      *
      * @return void
      */
-    private function bind(string $abstract, string|callable $factory = null, bool $share = false): void
+    private function bind(string $abstract, string|callable|object $factory = null, bool $share = false): void
     {
         $this->bindings[$abstract]['share']   = $share;
         $this->bindings[$abstract]['factory'] = $factory ?? $abstract;
@@ -145,18 +145,9 @@ class Container
 
         if ($bind['share'] === true && $this->isInstantiable($abstract)) {
             return $this->getInstanceOfAbstract($abstract);
-        } else {
-            if (!is_callable($bind['factory'])) {
-                $factory = $bind['factory'];
-                $factory = function () use ($factory, $parameters) {
-                    return new $factory(...$parameters);
-                };
-            } else {
-                $factory = $bind['factory'];
-            }
         }
 
-        $output = fn () => call_user_func($factory, ...$parameters);
+        $output = fn () => !empty($parameters) ? call_user_func((new $bind['factory'](...$parameters))) : resolver()->constructor($bind['factory']);
 
         if ($bind['share'] === true) {
             $this->setInstance($abstract, $output());
