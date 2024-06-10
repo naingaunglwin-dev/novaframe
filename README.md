@@ -1,7 +1,6 @@
 <div align="center">
 
-# NOVAFRAME
-## (Simple and Basic PHP Framework)
+<img src="public/nova_icon/readme_favicon.png">
 
 ![Static Badge](https://img.shields.io/badge/license-MIT-green)
 
