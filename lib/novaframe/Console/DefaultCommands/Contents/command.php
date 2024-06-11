@@ -50,7 +50,7 @@ class %s extends Command
      * - 'mode': Option mode
      * - 'description': The description of the option.
      * - 'default': default value
-     * - Example : $arguments = [
+     * - Example : $options = [
      *                  [
      *                      'name'        => 'optionName',
      *                      'shortcut'    => 's',
@@ -74,14 +74,10 @@ class %s extends Command
 
     /**
      * Command Action
-     *
-     * @return int
      */
-    public function action(): int
+    public function action()
     {
         // Your code goes here
-
-        // Return self::SUCCESS on success and self::FAILURE on fail
     }
 }
 
