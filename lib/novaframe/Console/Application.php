@@ -26,12 +26,6 @@ class Application extends SymfonyApplication
      */
     public function commandLoader(): void
     {
-        $kernel = new Kernel();
-
-        foreach ($kernel->commands as $command) {
-            $this->add(new $command());
-        }
-
         $path      = config('app.paths.command');
         $namespace = config('app.namespace.command');
 
@@ -59,6 +53,12 @@ class Application extends SymfonyApplication
                     }
                 }
             }
+        }
+
+        $kernel = new Kernel();
+
+        foreach ($kernel->commands as $command) {
+            $this->add(new $command());
         }
     }
 

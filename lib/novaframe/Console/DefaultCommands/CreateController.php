@@ -3,12 +3,12 @@
 namespace Nova\Console\DefaultCommands;
 
 use Nova\Console\Command;
-use Nova\Console\DefaultCommands\Traits\ProcessResolver;
+use Nova\Console\DefaultCommands\Traits\CreateProcessResolver;
 use Symfony\Component\Console\Input\InputArgument;
 
 class CreateController extends Command
 {
-    use ProcessResolver;
+    use CreateProcessResolver;
 
     /**
      * The name of the console command.

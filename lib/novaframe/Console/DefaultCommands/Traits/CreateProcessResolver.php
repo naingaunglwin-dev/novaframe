@@ -5,13 +5,13 @@ namespace Nova\Console\DefaultCommands\Traits;
 use Nova\Helpers\Modules\File;
 
 /**
- * Trait ProcessResolver
+ * Trait CreateProcessResolver
  *
- * This trait provides methods for resolving and processing various types of files,
+ * This trait provides methods for resolving and processing various types of files creating,
  * such as controllers, migrations, seeders, commands, middleware, and models.
  *
  */
-trait ProcessResolver
+trait CreateProcessResolver
 {
     /**
      * Resolve the given file type.
