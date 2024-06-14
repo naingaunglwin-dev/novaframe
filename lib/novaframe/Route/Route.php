@@ -90,6 +90,104 @@ class Route
     }
 
     /**
+     * Creates a new route for GET requests.
+     *
+     * @param string $from The URL pattern for the route.
+     * @param string|array|callable $to The destination for the route (controller action, closure, or view).
+     * @param string|null $name The name of the route (optional).
+     *
+     * @return Route
+     */
+    public function get(string $from, string|array|callable $to, string $name = null): Route
+    {
+        return $this->create($from, $to, 'get', $name);
+    }
+
+    /**
+     * Creates a new route for POST requests.
+     *
+     * @param string $from The URL pattern for the route.
+     * @param string|array|callable $to The destination for the route (controller action, closure, or view).
+     * @param string|null $name The name of the route (optional).
+     *
+     * @return Route
+     */
+    public function post(string $from, string|array|callable $to, string $name = null): Route
+    {
+        return $this->create($from, $to, 'post', $name);
+    }
+
+    /**
+     * Creates a new route for DELETE requests.
+     *
+     * @param string $from The URL pattern for the route.
+     * @param string|array|callable $to The destination for the route (controller action, closure, or view).
+     * @param string|null $name The name of the route (optional).
+     *
+     * @return Route
+     */
+    public function delete(string $from, string|array|callable $to, string $name = null): Route
+    {
+        return $this->create($from, $to, 'delete', $name);
+    }
+
+    /**
+     * Creates a new route for PUT requests.
+     *
+     * @param string $from The URL pattern for the route.
+     * @param string|array|callable $to The destination for the route (controller action, closure, or view).
+     * @param string|null $name The name of the route (optional).
+     *
+     * @return Route
+     */
+    public function put(string $from, string|array|callable $to, string $name = null): Route
+    {
+        return $this->create($from, $to, 'put', $name);
+    }
+
+    /**
+     * Creates a new route for PATCH requests.
+     *
+     * @param string $from The URL pattern for the route.
+     * @param string|array|callable $to The destination for the route (controller action, closure, or view).
+     * @param string|null $name The name of the route (optional).
+     *
+     * @return Route
+     */
+    public function patch(string $from, string|array|callable $to, string $name = null): Route
+    {
+        return $this->create($from, $to, 'patch', $name);
+    }
+
+    /**
+     * Creates a new route for HEAD requests.
+     *
+     * @param string $from The URL pattern for the route.
+     * @param string|array|callable $to The destination for the route (controller action, closure, or view).
+     * @param string|null $name The name of the route (optional).
+     *
+     * @return Route
+     */
+    public function head(string $from, string|array|callable $to, string $name = null): Route
+    {
+        return $this->create($from, $to, 'head', $name);
+    }
+
+    /**
+     * Creates a new route for OPTIONS requests.
+     *
+     * @param string $from The URL pattern for the route.
+     * @param string|array|callable $to The destination for the route (controller action, closure, or view).
+     * @param string|null $name The name of the route (optional).
+     *
+     * @return Route
+     */
+    public function options(string $from, string|array|callable $to, string $name = null): Route
+    {
+        return $this->create($from, $to, 'options', $name);
+    }
+
+    /**
      * Creates a new route with all http methods and the specified attributes.
      *
      * @param string $from The URL pattern for the route.
