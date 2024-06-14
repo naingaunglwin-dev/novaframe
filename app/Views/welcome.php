@@ -1449,7 +1449,6 @@ Route::get("user/{credential, :regex(^\d+$)}", [\App\HTTP\Controllers\User::clas
                 nav.classList.remove("mobile");
                 nav.classList.remove("desktop");
 
-                console.log(window.innerWidth)
                 if (window.innerWidth < 780) {
                     leftSide.classList.add("mobile");
                     nav.classList.add("mobile");
