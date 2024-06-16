@@ -69,19 +69,19 @@ class Application extends Container
 
             $application->commandLoader();
 
+            // Run bootstrapping before stage
+            Bootstrap::run('after');
+
             return $application->run();
         }
 
         // Continue process if environment is not from cli
         Event::trigger('nova.web');
 
-        $dispatcher = RouteDispatcher::getInstance();
+        // Run bootstrapping before stage
+        Bootstrap::run('after');
 
-        [$request, $response] = func_get_args();
-
-        $result = $dispatcher->dispatch($request, $response);
-
-        return $result;
+        return RouteDispatcher::getInstance()->dispatch(...$resource);
     }
 
     /**
