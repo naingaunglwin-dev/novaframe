@@ -48,10 +48,6 @@ class Application extends Container
      */
     public function launch(mixed ...$resource)
     {
-        $exception = $this->make(HandlerInterface::class);
-
-        $exception->set();
-
         required(APP_PATH . 'Bootstrap/bootstrap.php');
 
         // Run bootstrapping before stage
@@ -92,10 +88,28 @@ class Application extends Container
      *
      * @return void
      */
-    private function initialize()
+    private function initialize(): void
     {
-        $this->add('dotenv', \Nova\Service\Dotenv\Dotenv::class);
-        $this->add('config', \Nova\Service\Config\Config::class);
+        $this->setupHandler();
+
+        $this->locale = config('app.locale');
+    }
+
+    /**
+     * Setup Framework Handler
+     *
+     * @return void
+     */
+    private function setupHandler(): void
+    {
+        $abstract = \Nova\Exception\HandlerInterface::class;
+
+        $this->singleton(
+            $abstract,
+            \Nova\Exception\Handler::class
+        );
+
+        $this->make($abstract)->set();
     }
 
     /**
