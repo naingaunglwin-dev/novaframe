@@ -28,7 +28,7 @@ if (!function_exists('env')) {
      */
     function env(string $name, mixed $default = null): mixed
     {
-        return app('dotenv')->get($name) ?? $default;
+        return service('dotenv')->get($name) ?? $default;
     }
 }
 
@@ -42,7 +42,7 @@ if (!function_exists('config')) {
      */
     function config(string $key, mixed $default = null): mixed
     {
-        return app('config')->get($key) ?? $default;
+        return service('config')->get($key) ?? $default;
     }
 }
 
