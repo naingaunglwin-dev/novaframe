@@ -19,22 +19,22 @@ class Request implements RequestInterface
     protected object $sanitized;
 
     public function __construct(
-        public readonly array $get,
-        public readonly array $post,
-        public readonly array $cookie,
-        public readonly array $files,
-        public readonly array $server,
+        array $get = null,
+        array $post = null,
+        array $cookie = null,
+        array $files = null,
+        array $server = null,
     )
     {
         $content = file_get_contents('php://input');
 
         $this->globals = (object)[
-            'get'    => $get,
-            'post'   => $post,
-            'cookie' => $cookie,
-            'files'  => $files,
-            'server' => $server,
-            'header' => php_sapi_name() !== 'cli' ? [] : getallheaders(),
+            'get'    => empty($get) ? $_GET : $get,
+            'post'   => empty($post) ? $_POST : $post,
+            'cookie' => empty($cookie) ? $_COOKIE : $cookie,
+            'files'  => empty($files) ? $_FILES : $files,
+            'server' => empty($server) ? $_SERVER : $server,
+            'header' => php_sapi_name() !== 'cli' ? getallheaders() : [],
             'body'   => json_decode($content, true),
         ];
 
