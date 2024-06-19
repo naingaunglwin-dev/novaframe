@@ -17,5 +17,7 @@ class Kernel
         \Nova\Console\DefaultCommands\CreateModel::class,
         \Nova\Console\DefaultCommands\CreateCommand::class,
         \Nova\Console\DefaultCommands\Serve::class,
+        \Nova\Console\DefaultCommands\GenerateConfigCache::class,
+        \Nova\Console\DefaultCommands\DeleteConfigCache::class,
     ];
 }
