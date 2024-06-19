@@ -56,7 +56,7 @@ if (!function_exists('lang')) {
      */
     function lang(string $message, ...$placeholder): mixed
     {
-        return \Nova\Facade\Language::getMessage($message, ...$placeholder);
+        return service('language')->getMessage($message, ...$placeholder);
     }
 }
 
