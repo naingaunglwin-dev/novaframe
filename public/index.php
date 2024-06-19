@@ -53,25 +53,15 @@ if (file_exists(ROOT_PATH . '/tmp/maintenance.php')) {
 }
 
 /*
- |------------------------------------------
- | Bootstrap File
- |------------------------------------------
- |
- | Include the framework's bootstrap file
- |
- */
-$app = require_once ROOT_PATH . '/lib/novaframe/Bootstrap/app.php';
-
-/*
  |-------------------------------------------------------
- | Launch Application
+ | Boot Web Application
  |-------------------------------------------------------
  |
  | Launch NovaFrame Application with
- | the request and response
+ | the incoming request
  |
  */
-$app->launch(
-    Nova\HTTP\IncomingRequest::createFromGlobals(),
-    new Nova\HTTP\Response()
-);
+(require_once ROOT_PATH . '/lib/novaframe/Bootstrap/app.php')
+    ->boot(
+        Nova\HTTP\IncomingRequest::createFromGlobals()
+    );

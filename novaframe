@@ -30,30 +30,23 @@ if (version_compare(phpversion(), '8.2', '<')) {
 define('ROOT_PATH', __DIR__);
 
 /*
- |----------------------------------
- | Include Composer Autoload
- |----------------------------------
+ |-----------------------------------------------------------------------------
+ | Autoload Dependencies
+ |-----------------------------------------------------------------------------
+ |
+ | Load the Composer-generated autoload file to automatically load all the
+ | necessary dependencies and classes required by the application.
+ |
  */
 require_once ROOT_PATH . '/vendor/autoload.php';
 
 /*
- |--------------------------------------------
- | Bootstrap File
- |--------------------------------------------
- |
- | Include the framework's bootstrap file
- |
- */
-$app = require_once ROOT_PATH . '/lib/novaframe/Bootstrap/app.php';
-
-/*
  |-------------------------------------------------------
- | Launch Application
+ | Boot Command-Line Interface Application
  |-------------------------------------------------------
  |
  | Launch NovaFrame Application with start time
  |
  */
-$app->launch(
-    microtime(true)
-);
+(require_once ROOT_PATH . '/lib/novaframe/Bootstrap/app.php')
+    ->boot(microtime(true));

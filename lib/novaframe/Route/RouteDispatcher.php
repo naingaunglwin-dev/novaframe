@@ -93,6 +93,7 @@ class RouteDispatcher
     {
         $this->dynamicParameters = new DynamicParameters();
         $this->view              = new View();
+        $this->response          = new Response();
     }
 
     /**
@@ -202,10 +203,8 @@ class RouteDispatcher
      *
      * @return mixed The result of the callback/controller execution.
      */
-    public function dispatch(IncomingRequestInterface $request, ResponseInterface $response): mixed
+    public function dispatch(IncomingRequestInterface $request): mixed
     {
-        $this->response = $response;
-
         $middleware = new MiddlewareHandler();
 
         $request = $middleware->handleDefault($request);

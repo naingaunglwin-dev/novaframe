@@ -40,13 +40,13 @@ class Application extends Container
     }
 
     /**
-     * Launch the application base on php environment
+     * Boot the application base on php environment
      *
      * @param mixed $resource Resources to pass to web or cli application
      *
      * @return mixed
      */
-    public function launch(mixed ...$resource)
+    public function boot(mixed ...$resource): mixed
     {
         required(APP_PATH . 'Bootstrap/bootstrap.php');
 
