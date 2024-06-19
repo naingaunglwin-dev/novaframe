@@ -17,7 +17,7 @@ if (!defined('TMP_PATH')) {
 }
 
 if (!defined('BOOTSTRAP_PATH')) {
-    define('BOOTSTRAP_PATH', str_replace('\\', '/', dirname(__DIR__)));
+    define('BOOTSTRAP_PATH', str_replace('\\', '/', APP_PATH . 'Bootstrap/'));
 }
 
 /*
