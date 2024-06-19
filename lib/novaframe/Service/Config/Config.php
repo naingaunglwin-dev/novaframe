@@ -5,20 +5,6 @@ namespace Nova\Service\Config;
 class Config
 {
     /**
-     * Check config files are loaded or not
-     *
-     * @var bool
-     */
-    private bool $isLoaded = false;
-
-    /**
-     * Configuration data
-     *
-     * @var array
-     */
-    private array $data = [];
-
-    /**
      * Config path
      *
      * @var string
@@ -26,11 +12,11 @@ class Config
     private string $path = APP_PATH . 'Config/';
 
     /**
-     * Cache path
+     * Store path
      *
      * @var string
      */
-    private string $cache = BOOTSTRAP_PATH . 'cache/config_cache.php';
+    private string $storePath = BOOTSTRAP_PATH . 'cache/config.cache.php';
 
     /**
      * Retrieves the value associated with the specified configuration key.
@@ -40,9 +26,7 @@ class Config
      */
     public function get(string $name): mixed
     {
-        $this->resolve($name);
-
-        return $this->data[$name] ?? null;
+        return $this->resolve($name) ?? null;
     }
 
     /**
@@ -57,42 +41,56 @@ class Config
      *
      * @param string $name The dot-separated configuration key.
      *
-     * @return void
+     * @return mixed
      */
-    private function resolve(string $name): void
+    private function resolve(string $name): mixed
     {
-        $return[$name] = null;
+        $result[$name] = null;
 
-        $keys = explode('.', $name);
+        $keys = explode(".", $name);
 
         if (!empty($keys)) {
-            $fileName = $keys[0];
+            $file = $keys[0];
 
             unset($keys[0]);
 
-            $file = $this->path . $fileName . ".php";
+            $file = $this->path . $file . ".php";
+
+            if (file_exists($this->storePath)) {
+
+                $data = require $this->storePath;
+
+                return $this->doResolve($keys, $data[pathinfo($file, PATHINFO_FILENAME)] ?? []);
+            }
 
             if (file_exists($file)) {
-
-                $data = require $file;
-
-                foreach ($keys as $key) {
-                    if (isset($data[$key])) {
-                        $data = $data[$key];
-                    } else {
-                        $data = null;
-                        break;
-                    }
-                }
-
-                $return[$name] = $data;
-            } else {
-                $return[$name] = null;
+                return $this->doResolve($keys, require $file);
             }
-        } else {
-            $return[$name] = null;
+
+            return null;
         }
 
-        $this->data = $return;
+        return null;
+    }
+
+    /**
+     * Resolve the process with given keys and data array
+     *
+     * @param $keys
+     * @param $data
+     * @return mixed|null
+     */
+    private function doResolve($keys, $data): mixed
+    {
+        foreach ($keys as $key) {
+            if (isset($data[$key])) {
+                $data = $data[$key];
+            } else {
+                $data = null;
+                break;
+            }
+        }
+
+        return $data;
     }
 }

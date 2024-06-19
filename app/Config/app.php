@@ -133,11 +133,7 @@ return [
      |
      */
     'locales' => [
-        'onNotFound' => [
-            'default'   => 'en',
-            'exception' => true,
-            'callback'  => function () {},
-        ],
+        'fallback' => 'en',
 
         'list' => [
             'en',
