@@ -137,6 +137,7 @@ return [
 
         'list' => [
             'en',
+            'ja'
         ]
     ],
 
