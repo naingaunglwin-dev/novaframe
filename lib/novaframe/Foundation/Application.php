@@ -141,7 +141,7 @@ class Application extends Container
      */
     public function getLocale(): string
     {
-        return config('app.locale') ?? $this->locale;
+        return $this->locale;
     }
 
     /**
