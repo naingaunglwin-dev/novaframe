@@ -65,14 +65,15 @@ class ControllerResolver
      */
     public function action(): mixed
     {
-        $request  = IncomingRequest::createFromGlobals();
-        $response = new Response();
-
         if (method_exists($this->controller, 'initialize')) {
-            Event::trigger('controller_initialize', $this->controller, $request, $response);
+            Event::trigger(
+                'controller_initialize',
+                $this->controller, IncomingRequest::createFromGlobals(),
+                new Response()
+            );
         }
 
-        return $this->controller->{$this->method}($request, $response);
+        return resolver($this->controller)->method($this->method);
     }
 
     /**
