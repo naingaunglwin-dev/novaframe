@@ -167,10 +167,10 @@ class ResolveDependencies
                 $methodResolvedDependencies[] = $this->resolveParameter($parameter);
             }
 
-            return $instance->{$method}(...$methodResolvedDependencies);
+            return $instance->{$method->getName()}(...$methodResolvedDependencies);
         }
 
-        return $instance->{$method}();
+        return $instance->{$method->getName()}();
     }
 
     /**
