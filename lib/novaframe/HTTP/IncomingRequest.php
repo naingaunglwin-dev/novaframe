@@ -177,25 +177,31 @@ class IncomingRequest extends Request implements IncomingRequestInterface
     }
 
     /**
-     * Get value from `$_SERVER`
+     * Get a value from $_SERVER.
      *
-     * @param string $key
-     * @return mixed
+     * @param string $key The key to retrieve from $_SERVER.
+     * @param bool $sanitized Whether to fetch from sanitized ($_SERVER) or globals ($_SERVER).
+     * @return mixed|null The value from $_SERVER corresponding to $key, or null if not found.
      */
-    private function getFromServer(string $key): mixed
+    public function getFromServer(string $key, bool $sanitized = true): mixed
     {
-        return $this->globals->server[$key] ?? null;
+        $from = $sanitized ? "sanitized" : "globals";
+
+        return $this->{$from}->server[$key] ?? null;
     }
 
     /**
-     * Get value from Header
+     * Get a value from headers.
      *
-     * @param string $key
-     * @return mixed
+     * @param string $key The key to retrieve from headers.
+     * @param bool $sanitized Whether to fetch from sanitized (filtered) headers or raw headers ($_SERVER).
+     * @return mixed|null The value from headers corresponding to $key, or null if not found.
      */
-    private function getFromHeader(string $key): mixed
+    public function getFromHeader(string $key, bool $sanitized = true): mixed
     {
-        return $this->globals->header[$key] ?? null;
+        $from = $sanitized ? "sanitized" : "globals";
+
+        return $this->{$from}->header[$key] ?? null;
     }
 
     /**
