@@ -59,8 +59,8 @@ class Request implements RequestInterface
             'post'   => $this->filter('POST'),
             'file'   => $this->filter('FILES'),
             'cookie' => $this->filter('COOKIE'),
-            'server' => $_SERVER,
-            'header' => php_sapi_name() !== 'cli' ? [] : getallheaders(),
+            'server' => $this->escapeHtmlInArray($_SERVER),
+            'header' => php_sapi_name() !== 'cli' ? getallheaders() : [],
             'body'   => $this->filter('BODY'),
         ];
     }
