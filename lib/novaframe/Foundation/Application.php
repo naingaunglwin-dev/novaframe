@@ -3,8 +3,7 @@
 namespace Nova\Foundation;
 
 use Nova\Container\Container;
-use Nova\Event\Event;
-use Nova\Exception\HandlerInterface;
+use Nova\Facade\Event;
 use Nova\Facade\Bootstrap;
 use Nova\Route\RouteDispatcher;
 
@@ -55,11 +54,11 @@ class Application extends Container
 
         required(APP_PATH . 'Config/event.php');
 
-        Event::trigger('NovaFrame.system.before');
+        Event::emit("nova.before");
 
         if ($this->isCLI()) {
 
-            Event::trigger('nova.cli');
+            Event::emit("nova.cli");
 
             $application = new \Nova\Console\Application(...$resource);
 
@@ -72,9 +71,9 @@ class Application extends Container
         }
 
         // Continue process if environment is not from cli
-        Event::trigger('nova.web');
+        Event::emit("nova.web");
 
-        // Run bootstrapping before stage
+        // Run bootstrapping after stage
         Bootstrap::run('after');
 
         return RouteDispatcher::getInstance()->dispatch(...$resource);

@@ -1,6 +1,6 @@
 <?php
 
-use Nova\Event\Event;
+use Nova\Facade\Event;
 
 /*
  |----------------------------------------------------------------------
@@ -10,7 +10,7 @@ use Nova\Event\Event;
  | Events that will load on stage before launching the application
  |
  */
-Event::system('before', function () {
+Event::on('nova.before', function () {
 
     /*
      |---------------------------------

@@ -2,7 +2,7 @@
 
 namespace Nova\Console;
 
-use Nova\Event\Event;
+use Nova\Facade\Event;
 use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\Console\Event\ConsoleTerminateEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -39,7 +39,7 @@ class NOVAListener implements EventSubscriberInterface
 
             $runtime = round($end - $this->start, 2);
 
-            Event::trigger('console_terminate', $event->getOutput(), $runtime);
+            Event::emit('console_terminate', $event->getOutput(), $runtime);
         } else {
             $event->getOutput()->writeln("\n");
         }

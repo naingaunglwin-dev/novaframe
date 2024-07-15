@@ -2,7 +2,7 @@
 
 namespace Nova\Route;
 
-use Nova\Event\Event;
+use Nova\Facade\Event;
 use Nova\HTTP\IncomingRequest;
 use Nova\HTTP\Response;
 
@@ -66,7 +66,7 @@ class ControllerResolver
     public function action(): mixed
     {
         if (method_exists($this->controller, 'initialize')) {
-            Event::trigger(
+            Event::emit(
                 'controller_initialize',
                 $this->controller, IncomingRequest::createFromGlobals(),
                 new Response()
