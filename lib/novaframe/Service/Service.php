@@ -6,6 +6,11 @@ use Nova\Container\Container;
 
 class Service
 {
+    /**
+     * List of services
+     *
+     * @var array
+     */
     private array $list = [
         'config'    => \Nova\Service\Config\Config::class,
         'dotenv'    => \Nova\Service\Dotenv\Dotenv::class,
@@ -25,6 +30,10 @@ class Service
     public function __construct(Container $container = null)
     {
         $this->container = $container ?? new Container();
+
+        foreach ($this->list as $service => $class) {
+            $this->container->add("Service[$service]", $class);
+        }
     }
 
     /**
@@ -40,8 +49,6 @@ class Service
         if (!$this->serviceExists($service)) {
             return null;
         }
-
-        $this->container->add("Service[$service]", $this->list[$service]);
 
         return $this->container->make("Service[$service]", ...$parameters);
     }
