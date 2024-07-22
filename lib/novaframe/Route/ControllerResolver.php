@@ -38,8 +38,7 @@ class ControllerResolver
      */
     public function resolve(array $array, callable $controllerException, callable $methodException): ControllerResolver
     {
-        $controller = $array[0];
-        $method = $array[1];
+        list($controller, $method) = $array;
 
         if ($this->verifyController($controller)) {
             $this->controller = new $controller();
@@ -73,7 +72,13 @@ class ControllerResolver
             );
         }
 
-        return resolver($this->controller)->method($this->method);
+        $result = resolver($this->controller)->method($this->method);
+
+        if ($result instanceof Response) {
+            return $result->send();
+        }
+
+        return $result;
     }
 
     /**
