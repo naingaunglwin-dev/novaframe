@@ -6,7 +6,6 @@ use InvalidArgumentException;
 use Nova\HTTP\DynamicParameters;
 use Nova\HTTP\IncomingRequestInterface;
 use Nova\HTTP\Response;
-use Nova\HTTP\ResponseInterface;
 use Nova\Middleware\Middleware;
 use Nova\Middleware\MiddlewareHandler;
 use Nova\View\View;
@@ -112,7 +111,7 @@ class RouteDispatcher
         $this->doAdd(
             $from,
             $to,
-            $this->convertMethodUppercase($method),
+            $this->convert2uppercase($method),
             $name,
             $isGroup,
             $prefix
@@ -129,7 +128,7 @@ class RouteDispatcher
      */
     public function addMiddleware(string|array $method, string|array|Middleware $middleware, string $from): void
     {
-        $method = $this->convertMethodUppercase($method);
+        $method = $this->convert2uppercase($method);
 
         $this->checkMethod($method);
 
@@ -672,11 +671,11 @@ class RouteDispatcher
      * @return array|string        The converted HTTP method(s) in uppercase. Returns
      *                             an array if the input was an array, otherwise returns a string.
      */
-    private function convertMethodUppercase(string|array $method): array|string
+    private function convert2uppercase(string|array $method): array|string
     {
         if (is_array($method)) {
             foreach ($method as $index => $m) {
-                $method[$index] = $this->convertMethodUppercase($method);
+                $method[$index] = $this->convert2uppercase($method);
             }
 
             return $method;
