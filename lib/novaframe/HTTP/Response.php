@@ -228,13 +228,11 @@ class Response implements ResponseInterface
      */
     public function sendHeaders(): Response
     {
-        if (headers_sent()) {
+        if ($this->isHeaderSent()) {
             return $this;
         }
 
-        $request = IncomingRequest::createFromGlobals();
-
-        header(sprintf('HTTP/%s %s %s', $request->getProtocolVersion() ?? '1.1', $this->statusCode, $this->statusCodes[$this->statusCode]), true, $this->statusCode);
+        header(sprintf('HTTP/%s %s %s', IncomingRequest::createFromGlobals()->getProtocolVersion() ?? '1.1', $this->statusCode, $this->statusCodes[$this->statusCode]), true, $this->statusCode);
 
         foreach ($this->headers as $name => $value) {
             header($name . ': ' . $value);
@@ -258,10 +256,23 @@ class Response implements ResponseInterface
      */
     public function send(): Response
     {
-        $this->sendHeaders();
+        if (!$this->isHeaderSent()) {
+            $this->sendHeaders();
+        }
+
         $this->sendBody();
 
         return $this;
+    }
+
+    /**
+     * Check whether headers are already sent
+     *
+     * @return bool
+     */
+    public function isHeaderSent(): bool
+    {
+        return headers_sent();
     }
 
     /**
