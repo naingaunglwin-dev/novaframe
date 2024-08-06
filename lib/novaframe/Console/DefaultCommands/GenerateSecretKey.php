@@ -3,7 +3,7 @@
 namespace Nova\Console\DefaultCommands;
 
 use Nova\Console\Command;
-use Nova\Helpers\Modules\File;
+use Nova\File\File;
 
 class GenerateSecretKey extends Command
 {
@@ -96,7 +96,7 @@ class GenerateSecretKey extends Command
 
             $file = new File($envFile);
 
-            $content = $file->getContent();
+            $content = $file->content();
 
             $lines = array_filter(explode(PHP_EOL, $content), function($line) {
                 return !str_starts_with(trim($line), 'APP_KEY=');
@@ -110,7 +110,7 @@ class GenerateSecretKey extends Command
                 array_splice($lines, $appGroupLine + 1, 0, $key);
             }
 
-            $file->writeContent(implode(PHP_EOL, $lines));
+            $file->write(implode(PHP_EOL, $lines), 'start', true);
 
             $this->box('Success', 'white', 'green', ['bold']);
             $this->success("Your secret key is generated successfully");

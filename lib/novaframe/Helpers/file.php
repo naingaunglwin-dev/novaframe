@@ -1,6 +1,6 @@
 <?php
 
-use Nova\Helpers\Modules\File;
+use Nova\File\File;
 
 if (!function_exists('__required')) {
     /**
@@ -11,14 +11,10 @@ if (!function_exists('__required')) {
      */
     function required(string ...$files): void
     {
-        $files = func_get_args();
-
-        if (!empty($files)) {
+        if (!empty($files = func_get_args())) {
             foreach ($files as $file) {
-                $file = new File($file);
-                if ($file->isExist()) {
-                    require_once $file->getFile();
-                }
+                $file = new File($file, true);
+                $file->include();
             }
         }
     }
@@ -46,7 +42,7 @@ if (!function_exists('css')) {
     /**
      * Generate an HTML link tag for a CSS file.
      *
-     * This function generates an HTML link tag to include a CSS file. It also appends a version parameter for cache busting.
+     * This generates an HTML link tag to include a CSS file. It also appends a version parameter for cache busting.
      *
      * @param string $file The name of the CSS file.
      * @param string $path The path to the CSS file relative to the public directory. Default is 'css'.
@@ -60,7 +56,7 @@ if (!function_exists('css')) {
 
         $cssFile = str_ends_with($path, '/') ? $path . $file : $path . '/' . $file . '.css';
 
-        if (!_file(PUBLIC_PATH . $cssFile)->isExist()) {
+        if (!f(PUBLIC_PATH . $cssFile)->exists()) {
             throw new InvalidArgumentException('File not found ' . $cssFile);
         }
 
@@ -76,7 +72,7 @@ if (!function_exists('js')) {
     /**
      * Generate an HTML script tag for a JavaScript file.
      *
-     * This function generates an HTML script tag to include a JavaScript file. It also appends a version parameter for cache busting.
+     * This generates an HTML script tag to include a JavaScript file. It also appends a version parameter for cache busting.
      *
      * @param string $file The name of the JavaScript file.
      * @param string $path The path to the JavaScript file relative to the public directory. Default is 'js'.
@@ -90,7 +86,7 @@ if (!function_exists('js')) {
 
         $jsFile = str_ends_with($path, '/') ? $path . $file : $path . '/' . $file . '.js';
 
-        if (!_file(PUBLIC_PATH . $jsFile)->isExist()) {
+        if (!f(PUBLIC_PATH . $jsFile)->exists()) {
             throw new InvalidArgumentException('File not found ' . $jsFile);
         }
 
@@ -102,25 +98,29 @@ if (!function_exists('js')) {
     }
 }
 
-if (!function_exists('_file')) {
+if (!function_exists('f')) {
     /**
      * Create a new instance of the File class.
      *
-     * This function returns a new instance of the File class, allowing you to work with file paths
+     * This returns a new instance of the File class, allowing you to work with file paths
      * in a convenient and streamlined manner. You can chain method calls on the returned object
      * for operations like setting the file path and retrieving file information.
      *
      * Example Usage:
-     * ```php
-     * _file()->setFile('file.ext')->getName();
+     *
+     * ```
+     * f('file.ext')->extension();
+     *
+     * f()->set('file.ext')->name();
      * ```
      *
      * @param string|null $file File name
+     * @param bool $strict Strict mode for file
      *
-     * @return File A new instance of the File class.
+     * @return \Nova\File\File A new instance of the File class.
      */
-    function _file(string $file = null): File
+    function f(string $file = null, bool $strict = false): \Nova\File\File
     {
-        return new File($file);
+        return new \Nova\File\File($file, $strict);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Nova\Console\DefaultCommands\Traits;
 
-use Nova\Helpers\Modules\File;
+use Nova\File\File;
 
 /**
  * Trait CreateProcessResolver
@@ -64,9 +64,9 @@ trait CreateProcessResolver
         try {
             $helper = new File();
 
-            $helper->setFile($path . DIRECTORY_SEPARATOR . $file . '.php');
+            $helper->set($path . DIRECTORY_SEPARATOR . $file . '.php');
 
-            if ($helper->writeContent($content)) {
+            if ($helper->write($content)) {
                 $dir = str_replace(APP_PATH, '', $path);
 
                 $this->box('Success', 'white', 'green', ['bold']);

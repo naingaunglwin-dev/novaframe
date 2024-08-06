@@ -112,7 +112,7 @@ class View
 
             $file = $this->verifyExtension($this->path . $file);
 
-            if (!$this->isExists($file)) {
+            if (!f($file)->exists()) {
                 throw FileException::pathNotFound($file);
             }
 
@@ -215,7 +215,7 @@ class View
         $files = [];
 
         foreach ($this->views as $view) {
-            $content = file_get_contents($view);
+            $content = f($view)->content();
 
             if ($content !== false && preg_match('/\$this->extends\([\'"]?(.*?)[\'"]?\)/s', $content, $matches)) {
                 $files[] = $this->verifyExtension($this->path . $matches[1]);
@@ -283,7 +283,7 @@ class View
 
         $file = $this->verifyExtension($this->path . $file);
 
-        if (!$this->isExists($file)) {
+        if (!f($file)->exists()) {
             throw FileException::pathNotFound($file);
         }
 
@@ -308,18 +308,6 @@ class View
     }
 
     /**
-     * Verifies whether a views file exists.
-     *
-     * @param string $view The path to the views file.
-     *
-     * @return bool True if the views file exists, false otherwise.
-     */
-    private function isExists(string $view): bool
-    {
-        return file_exists($view);
-    }
-
-    /**
      * Verifies and adds the appropriate file extension to a views file.
      *
      * @param string $file The path to the views file.
@@ -328,7 +316,7 @@ class View
      */
     private function verifyExtension(string $file): string
     {
-        $extension = pathinfo($file, PATHINFO_EXTENSION);
+        $extension = f($file)->extension();
 
         if (empty($extension)) {
             $file = $file . '.php';
