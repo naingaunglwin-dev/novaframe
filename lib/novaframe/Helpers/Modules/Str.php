@@ -287,4 +287,25 @@ class Str
 
         return $random;
     }
+
+    /**
+     * Compare two given strings.
+     *
+     * This compares two strings and checks if they are equal. The comparison can be case-sensitive or case-insensitive
+     * based on the provided flag.
+     *
+     * @param string $needle The first string to compare.
+     * @param string $haystack The second string to compare.
+     * @param bool $caseSensitive Optional. If true, the comparison is case-sensitive. If false, the comparison is case-insensitive. Default is true.
+     *
+     * @return bool Returns true if the strings are equal based on the specified case sensitivity, false otherwise.
+     */
+    public static function equal2(string $needle, string $haystack, bool $caseSensitive = true): bool
+    {
+        if (!$caseSensitive) {
+            return strcasecmp($haystack, $needle) === 0;
+        }
+
+        return strcmp($haystack, $needle) === 0;
+    }
 }
