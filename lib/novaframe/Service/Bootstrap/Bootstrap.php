@@ -4,7 +4,19 @@ namespace Nova\Service\Bootstrap;
 
 class Bootstrap
 {
+    /**
+     * Bootstrapping processes
+     *
+     * @var array
+     */
     private static array $process = [];
+
+    /**
+     * Current Stage (before or after)
+     *
+     * @var string
+     */
+    private static string $current;
 
     /**
      * Register a process to run before the application launches.
@@ -14,6 +26,8 @@ class Bootstrap
      */
     public function before(callable $process): Bootstrap
     {
+        self::$current = "before";
+
         $this->save('before', $process);
 
         return $this;
@@ -27,6 +41,8 @@ class Bootstrap
      */
     public function after(callable $process): Bootstrap
     {
+        self::$current = "after";
+
         $this->save('after', $process);
 
         return $this;
@@ -44,7 +60,7 @@ class Bootstrap
      */
     public function web(callable $callback): Bootstrap
     {
-        $this->save('web', $callback);
+        $this->save(empty(self::$current) ? 'web' : self::$current . '.web', $callback);
 
         return $this;
     }
@@ -61,7 +77,7 @@ class Bootstrap
      */
     public function cli(callable $callback): Bootstrap
     {
-        $this->save('cli', $callback);
+        $this->save(empty(self::$current) ? 'cli' : self::$current . '.cli', $callback);
 
         return $this;
     }
@@ -132,12 +148,12 @@ class Bootstrap
         }
 
         if (php_sapi_name() === 'cli' && $stage !== 'cli') {
-            if (isset(self::$process['cli'])) {
+            if (isset(self::$process[$stage . '.cli'])) {
                 $this->run('cli');
             }
         } else {
-            if (isset(self::$process['web']) && $stage !== 'web' && php_sapi_name() !== 'cli') {
-                $this->run('web');
+            if (isset(self::$process[$stage . '.web']) && $stage !== 'web' && php_sapi_name() !== 'cli') {
+                $this->run($stage . '.web');
             }
         }
 
@@ -158,7 +174,7 @@ class Bootstrap
      * @param array $files
      * @return array
      */
-    public function flattenFilesArray(array $files): array
+    private function flattenFilesArray(array $files): array
     {
         $result = [];
         array_walk_recursive($files, function ($a) use (&$result) {
