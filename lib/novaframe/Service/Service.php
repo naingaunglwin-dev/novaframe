@@ -17,7 +17,8 @@ class Service
         'language'  => \Nova\Service\Language\Language::class,
         'log'       => \Nova\Service\Logger\Log::class,
         'session'   => \Nova\Service\Session\Session::class,
-        'bootstrap' => \Nova\Service\Bootstrap\Bootstrap::class
+        'bootstrap' => \Nova\Service\Bootstrap\Bootstrap::class,
+        'cookie'    => \Nova\Service\Cookie\Cookie::class,
     ];
 
     private Container $container;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Nova\Cookie;
+namespace Nova\Service\Cookie;
 
 class Cookie
 {
