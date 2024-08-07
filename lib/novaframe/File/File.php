@@ -3,6 +3,7 @@
 namespace Nova\File;
 
 use InvalidArgumentException;
+use Nova\Exception\Exceptions\FileException;
 
 class File
 {
@@ -308,6 +309,33 @@ class File
         }
 
         return fclose($stream);
+    }
+
+    /**
+     * Delete the file if exists
+     *
+     * @return false|void
+     */
+    public function unlink()
+    {
+        if (!$this->exists()) {
+            return $this->throw(FileException::pathNotFound($this->get()));
+        } else {
+            unlink($this->get());
+        }
+    }
+
+    /**
+     * Delete file only when given callback true
+     *
+     * @param callable $callback
+     * @return void
+     */
+    public function unlinkWhen(callable $callback): void
+    {
+        if (resolver()->callback($callback) === true) {
+            $this->unlink();
+        }
     }
 
     /**
