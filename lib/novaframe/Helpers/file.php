@@ -2,14 +2,14 @@
 
 use Nova\File\File;
 
-if (!function_exists('__required')) {
+if (!function_exists('inc')) {
     /**
      * Includes the given files if it exists
      *
      * @param string ...$files Files to includes
      * @return void
      */
-    function required(string ...$files): void
+    function inc(string ...$files): void
     {
         if (!empty($files = func_get_args())) {
             foreach ($files as $file) {

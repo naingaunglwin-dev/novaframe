@@ -47,12 +47,12 @@ class Application extends Container
      */
     public function boot(mixed ...$resource): mixed
     {
-        required(APP_PATH . 'Bootstrap/bootstrap.php');
+        inc(APP_PATH . 'Bootstrap/bootstrap.php');
 
         // Run bootstrapping before stage
         Bootstrap::run('before');
 
-        required(APP_PATH . 'Config/event.php');
+        inc(APP_PATH . 'Config/event.php');
 
         Event::emit("nova.before");
 
