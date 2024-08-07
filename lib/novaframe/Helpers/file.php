@@ -14,7 +14,13 @@ if (!function_exists('__required')) {
         if (!empty($files = func_get_args())) {
             foreach ($files as $file) {
                 $file = new File($file, true);
-                $file->include();
+                if (env('APP_ENVIRONMENT', 'production') === "production") {
+                    $file->includeWhen(function () use ($file) {
+                        $file->exists();
+                    });
+                } else {
+                    $file->include();
+                }
             }
         }
     }
