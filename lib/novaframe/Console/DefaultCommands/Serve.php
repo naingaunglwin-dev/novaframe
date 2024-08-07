@@ -83,11 +83,12 @@ class Serve extends Command
 
         $process->start();
 
-        sleep(1);
+        usleep(700000);
 
         if ($process->isRunning()) {
-            $this->box('Success', 'white', 'green', ['bold']);
+            $this->box('INFO', 'white', 'cyan', ['bold']);
             $this->comment('Server is running on <href="http://localhost:8080">http://localhost:8080</>', true);
+            $this->writeln("");
         } else {
             $this->error("Error starting server", [], true);
             $this->writeln("<fg=gray>{$process->getErrorOutput()}</>");
@@ -99,71 +100,92 @@ class Serve extends Command
 
             $output = $success . $error;
 
-            if (!empty($output)) {
-                $lines = explode("\n", trim($output));
-
-                foreach ($lines as $line) {
-                    $data = explode(" ", $line);
-
-                    if (isset($data[7]) && strtolower($data[7]) === 'development') {
-                        continue;
-                    }
-
-                    $this->write("<fg=gray>" . $data[3] . " </>");
-
-                    $lineLength = 1;
-
-                    if (str_contains($data[6], '[')) {
-                        (int)$status = preg_replace('/[^\d]/', '', $data[6]);
-
-                        if (in_array($status, [200, 201, 202, 203, 204, 205, 206, 207, 208, 226])) {
-                            $this->success("[$status]", ['bold']);
-                        } elseif (in_array($status, array_keys($this->errorStatus()))) {
-                            $this->error("[$status]", ['bold']);
-                        } else {
-                            $this->write("<fg=yellow;options=bold>[$status]</>");
-                        }
-
-                        $lineLength += mb_strlen($data[3] . "  " . $data[6]);
-
-                    } else {
-                        $this->write("<fg=magenta>" . $data[6] . " </>");
-
-                        $lineLength += mb_strlen($data[3] . " " . $data[6] . " ");
-                    }
-
-                    if (isset($data[7])) {
-                        $this->write(' ');
-                        if (in_array($data[7], ['GET', 'POST', 'HEAD', 'PUT', 'PATCH', 'DELETE'])) {
-                            $this->box($data[7], 'white', 'cyan', ['bold']);
-                            $lineLength += mb_strlen("  " . $data[7]);
-                        } else {
-                            $this->write(" " . $data[7] . " ");
-                            $lineLength += mb_strlen("  " . $data[7] . "  ");
-                        }
-                    }
-
-                    if (isset($data[8])) {
-                        if (str_starts_with($data[8], '/')) {
-                            $this->write("<options=bold>" . $data[8] . "</>");
-                        } else {
-                            $this->write($data[8]);
-                        }
-
-                        $lineLength += mb_strlen($data[8]);
-                    }
-
-                    $remainingSpace = (new Terminal())->getWidth() - $lineLength;
-                    $dots = str_repeat('.', $remainingSpace);
-
-                    $this->writeln("<fg=gray>$dots</>");
-                }
-            }
+            $this->handle($output);
 
             usleep(100000);
         }
 
         $process->wait();
+    }
+
+    private function handle($output): void
+    {
+        if (!empty($output)) {
+            $lines = explode("\n", trim($output));
+
+            foreach ($lines as $line) {
+
+                if (str_contains($line, "Development")) {
+                    continue;
+                }
+
+                $line = preg_replace('/\[.*?\]/', '', $line,1);
+
+                $start = ">";
+
+                $runtime = date("Y-m-d H:i:s");
+
+                $this->write(sprintf("<fg=gray> %s %s</> ", $start, $runtime));
+
+                $lineLength = mb_strlen($start . " " . $runtime);
+
+                if (str_contains(preg_replace('/\[.*?\]/', '', $line,1), '[') && !str_contains(preg_replace('/\[.*?\]/', '', $line,1), "Accepted")) {
+
+                    $data = explode(" ", preg_replace('/\[.*?\]/', '', $line,1));
+
+                    foreach ($data as $str) {
+                        if (str_contains($str, "[")) {
+                            preg_match('/\[.*?\]/', $str, $matches);
+
+                            $status = isset($matches[0]) ? substr(substr($matches[0], 0, -1), 1) : 500;
+
+                            if (in_array($status, [200, 201, 202, 203, 204, 205, 206, 207, 208, 226])) {
+                                $this->success("$status ", ['bold']);
+                            } elseif (in_array($status, array_keys($this->errorStatus()))) {
+                                $this->error("$status ", ['bold']);
+                            } else {
+                                $this->write("<fg=yellow;options=bold>$status </>");
+                            }
+
+                            $lineLength += mb_strlen(" $status ");
+                        }
+                    }
+
+                    if (preg_match('/\b(GET|POST|HEAD|PUT|PATCH|DELETE)\b/', $line, $matches)) {
+                        $this->box($matches[0], 'white', 'cyan', ['bold']);
+                        $lineLength += mb_strlen("  " . $matches[0] . "  ");
+                    }
+
+                    if (str_contains($line, "/")) {
+                        $cut = substr($line, strpos($line, "/"));
+
+                        $cut = '"'. $cut . '" ';
+
+                        $this->write("<options=bold>" . $cut . "</>");
+
+                        $lineLength += mb_strlen($cut);
+                    }
+
+                } else {
+
+                    preg_match_all('/\[\S+\]:\d+ (\w+)/', $line, $matches);
+
+                    $text = '';
+
+                    foreach ($matches[1] as $match) {
+                        $text .= "$match ";
+                    }
+
+                    $this->write("<fg=white>$text</>");
+                    $lineLength += mb_strlen(" " . $text . " ");
+                }
+
+                $remainingSpace = (new Terminal())->getWidth() - ($lineLength + 1);
+                $dots = str_repeat('.', $remainingSpace);
+
+                $this->writeln("<fg=gray>$dots</>");
+            }
+        }
     }
 
     private function errorStatus(): array
