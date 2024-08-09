@@ -372,7 +372,7 @@ class File
             $content = $newline ? $content . "\n" : $content;
         }
 
-        $resource = $this->open($this->file, $mode);
+        $resource = $this->open($mode);
 
         if (
             $resource === false
