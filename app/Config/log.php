@@ -29,11 +29,10 @@ return [
      | Log Filename
      |------------------------------------------------------------------------
      |
-     | The filename format for the log files.
-     | This uses the current date to create a new log file each day.
+     | The filename for the log files.
      |
      */
-    'filename' => date('Y-m-d'),
+    'filename' => null,
 
     /*
      |------------------------------------------------------------------------------------------------------------
