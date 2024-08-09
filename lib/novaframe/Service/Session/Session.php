@@ -144,9 +144,13 @@ class Session implements SessionInterface
      */
     public function get(string $key, mixed $default = null): mixed
     {
-        return isset($this->global[$key])
+        $data = isset($this->global[$key])
             ? $this->checkKeyIsLastAccessTime($key, $this->global[$key])
             : $default;
+
+        $this->handleFlash();
+
+        return $data;
     }
 
     /**
@@ -161,6 +165,8 @@ class Session implements SessionInterface
                 $data[$key] = $this->checkKeyIsLastAccessTime($key, $value);
             }
         }
+
+        $this->handleFlash();
 
         return $data;
     }
@@ -200,35 +206,62 @@ class Session implements SessionInterface
     /**
      * @inheritDoc
      */
-    public function setFlashMessage(string $key, mixed $value): void
+    public function flash(string $key, mixed $value): void
     {
-        $session = $this->createSessionForFlash();
+        $this->set($key, $value);
 
-        $session->set($key, $value);
+        if (!$this->has("_flash")) {
+            $this->set("_flash", []);
+        }
+
+        $this->push("_flash", $key);
     }
 
     /**
      * @inheritDoc
      */
-    public function getFlashMessage(string $key): mixed
+    public function push(string $key, mixed $value): void
     {
-        $session = $this->createSessionForFlash();
+        $old = $this->get($key, []);
 
-        $data = $session->get($key);
+        if (!is_array($old)) {
+            throw new \BadMethodCallException("Cannot push new value into non array data");
+        }
 
-        $session->destroy($key);
+        $old[] = $value;
 
-        return $data;
+        $this->set($key, $old);
     }
 
     /**
-     * Create a session for flash messages.
-     *
-     * @return Session The session for flash messages.
+     * @inheritDoc
      */
-    private function createSessionForFlash(): Session
+    public function has(string $key): bool
     {
-        return new self('_nova_session_flash_data');
+        return isset($this->global[$key]);
+    }
+
+    /**
+     * Handles flash messages by decrypting and destroying them.
+     *
+     * This method retrieves flash messages stored in the `_flash` session key,
+     * decrypts them, and then removes them from the session. Finally, it deletes
+     * the `_flash` key itself.
+     *
+     * @return void
+     */
+    private function handleFlash(): void
+    {
+        $flash = $this->global["_flash"] ?? [];
+
+        if (!empty($flash)) {
+            $flash = decrypt($flash);
+            foreach ($flash as $f) {
+                $this->destroy($f);
+            }
+        }
+
+        $this->destroy("_flash");
     }
 
     /**

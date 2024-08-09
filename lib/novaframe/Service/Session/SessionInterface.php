@@ -56,21 +56,33 @@ interface SessionInterface
     public function isSecure(): bool;
 
     /**
-     * Sets a flash message.
+     * Sets a flash message to be available for the next request.
      *
-     * @param string $key   The key of the flash message.
-     * @param mixed  $value The value of the flash message.
+     * @param string $key   The key under which the flash message will be stored.
+     * @param mixed  $value The flash message value.
      *
      * @return void
      */
-    public function setFlashMessage(string $key, mixed $value): void;
+    public function flash(string $key, $value): void;
 
     /**
-     * Retrieves a flash message and removes it from the session.
+     * Push a value onto a session array.
      *
-     * @param string $key The key of the flash message.
+     * @param string $key   The session key where the value will be pushed.
+     * @param mixed  $value The value to be pushed into the array.
      *
-     * @return mixed The flash message value if found, otherwise null.
+     * @return void
+     *
+     * @throws \BadMethodCallException If the value associated with the key is not an array.
      */
-    public function getFlashMessage(string $key): mixed;
+    public function push(string $key, mixed $value): void;
+
+    /**
+     * Checks if a session key exists
+     *
+     * @param string $key The session key to check.
+     *
+     * @return bool True if the key exists, false otherwise.
+     */
+    public function has(string $key): bool;
 }
