@@ -1,5 +1,11 @@
 <?php
 
+/*
+ |-----------------------------------------------------------------------------------------------------------------
+ | Define necessary CONSTANTS
+ |-----------------------------------------------------------------------------------------------------------------
+ */
+
 if (!defined('APP_PATH')) {
     define('APP_PATH', str_replace('\\', '/', ROOT_PATH) . '/app/');
 };
@@ -33,4 +39,22 @@ if (!defined('BOOTSTRAP_PATH')) {
  */
 date_default_timezone_set(config('app.timezone', 'UTC'));
 
+/*
+ |----------------------------------------------------------------------------------------
+ | Load The Environment Data
+ |----------------------------------------------------------------------------------------
+ |
+ | This initializes the loading of environment variables for the application.
+ | The 'dotenv' service is called to load the environment variables from the .env file,
+ | which allows the application to access configuration settings that are not hardcoded
+ | into the source code.
+ |
+ */
+service('dotenv')->load();
+
+/*
+ |------------------------------------------------------
+ | Return the instance of Application
+ |------------------------------------------------------
+ */
 return \Nova\Foundation\Application::getInstance();
