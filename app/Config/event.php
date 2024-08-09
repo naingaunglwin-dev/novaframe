@@ -34,8 +34,8 @@ Event::on('nova.before', function () {
      */
     Event::on('nova.cli', function () {
 
-        Event::on('console_start', function ($output, $start, $timezone) {
-            $output->write(sprintf(PHP_EOL . "<comment>CLI RunTime: %s  [%s]</comment>" . PHP_EOL, $start, $timezone));
+        Event::on('console_start', function ($output, $time, $timezone) {
+            $output->write(sprintf(PHP_EOL . "<info> > command-line interface: %s [%s]</info>" . PHP_EOL, $time, $timezone));
         });
 
         Event::on('console_terminate', function ($output, $runtime) {
