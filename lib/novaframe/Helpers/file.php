@@ -12,15 +12,18 @@ if (!function_exists('inc')) {
     function inc(string ...$files): void
     {
         if (!empty($files = func_get_args())) {
-            foreach ($files as $file) {
-                $file = new File($file, true);
-                if (env('APP_ENVIRONMENT', 'production') === "production") {
+
+            $files = fc($files);
+
+            if (env("APP_ENVIRONMENT", "production") === "production") {
+                $files->each(function ($file) {
+                    $file = f($file, true);
                     $file->includeWhen(function () use ($file) {
-                        $file->exists();
+                        return $file->exists();
                     });
-                } else {
-                    $file->include();
-                }
+                });
+            } else {
+                $files->include();
             }
         }
     }
@@ -128,5 +131,20 @@ if (!function_exists('f')) {
     function f(string $file = null, bool $strict = false): \Nova\File\File
     {
         return new \Nova\File\File($file, $strict);
+    }
+}
+
+if (!function_exists("fc")) {
+    /**
+     * Creates a new instance of the FileCollection class with the provided files.
+     *
+     * This function acts as a shorthand to initialize a FileCollection object, optionally with a set of files.
+     *
+     * @param array|string|null $files Optional. An array of file paths or a single file path to initialize the collection with. Defaults to null.
+     * @return \Nova\File\FileCollection A new instance of the FileCollection class.
+     */
+    function fc(array|string|null $files = null): \Nova\File\FileCollection
+    {
+        return new \Nova\File\FileCollection($files);
     }
 }
