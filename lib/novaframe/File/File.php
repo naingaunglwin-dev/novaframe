@@ -113,6 +113,16 @@ class File
     }
 
     /**
+     * Get the dir name of the file
+     *
+     * @return string|null The directory name, or null if the file path is empty.
+     */
+    public function dirname(): string|null
+    {
+        return $this->getInfo("dirname");
+    }
+
+    /**
      * Get the file size
      *
      * @return int|null
@@ -148,7 +158,7 @@ class File
     /**
      * Get the information about the file based on the specified type
      *
-     * @param string $type PathInfo type to return ('name', 'extension', 'base_name', 'all', 'size', etc.).
+     * @param string $type PathInfo type to return ('name', 'extension', 'basename', 'all', 'size', 'dirname' etc.).
      * @return array|false|int|string|null
      */
     private function getInfo(string $type): bool|int|array|string|null
@@ -362,7 +372,7 @@ class File
             $content = $newline ? $content . "\n" : $content;
         }
 
-        $resource = fopen($this->file, $mode);
+        $resource = $this->open($this->file, $mode);
 
         if (
             $resource === false
@@ -378,7 +388,7 @@ class File
 
             flock($resource, LOCK_UN);
 
-            fclose($resource);
+            $this->close($resource);
 
             return true;
         } catch (\Exception $exception) {
