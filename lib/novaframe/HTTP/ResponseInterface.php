@@ -71,7 +71,7 @@ interface ResponseInterface
      *
      * @param string $url
      * @param int    $status
-     * @return Response
+     * @return RedirectResponse
      */
-    public function redirect(string $url, int $status = 302): Response;
+    public function redirect(string $url, int $status = 302): RedirectResponse;
 }

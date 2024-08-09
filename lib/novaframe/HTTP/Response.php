@@ -333,13 +333,9 @@ class Response implements ResponseInterface
     /**
      * @inheritDoc
      */
-    public function redirect(string $url, $status = 302): Response
+    public function redirect(string $url, $status = 302): RedirectResponse
     {
-        $this->setHeader('Location', $url);
-
-        $this->setStatus($status);
-
-        return $this;
+        return new RedirectResponse($url, $status);
     }
 
     /**
