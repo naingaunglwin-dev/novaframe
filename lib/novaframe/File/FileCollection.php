@@ -55,16 +55,24 @@ class FileCollection
      * Populates the collection with files from a specified directory.
      *
      * @param string $dir The directory path to get files from.
-     * @return FileCollection The updated FileCollection instance.
+     * @param mixed $default Default data to return if given dir contain no file
+     *
+     * @return FileCollection|mixed The updated FileCollection instance or default data if dir contain no file.
      * @throws InvalidArgumentException If the directory is empty.
      */
-    public function from(string $dir): FileCollection
+    public function from(string $dir, mixed $default = []): mixed
     {
         if (empty($dir)) {
             throw new InvalidArgumentException("Directory cannot be empty");
         }
 
-        $this->push(glob($dir));
+        $result = glob($dir);
+
+        if (!$result || empty($result)) {
+            return $default;
+        }
+
+        $this->push($result);
 
         return $this;
     }
