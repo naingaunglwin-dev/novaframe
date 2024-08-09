@@ -2,8 +2,11 @@
 
 namespace Nova\Console;
 
+use Nova\Facade\Event;
+use Nova\File\FileCollection;
 use Symfony\Component\Console\Application as SymfonyApplication;
 use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class Application extends SymfonyApplication
@@ -11,6 +14,8 @@ class Application extends SymfonyApplication
     public function __construct($start)
     {
         parent::__construct('NovaFrame', app()->version());
+
+        Event::emit("console_start", new ConsoleOutput, date("Y-m-d H:i:s"), config('app.timezone'));
 
         $dispatcher = new EventDispatcher();
 
@@ -33,26 +38,24 @@ class Application extends SymfonyApplication
             $namespace .= '\\';
         }
 
-        $files = scandir($path);
+        if (!str_ends_with($path, "\\") && !str_ends_with($path, "/")) {
+            $path = $path . "/*";
+        }
 
-        $files = $this->skipFiles($files, ['.', '..', '.gitkeep']);
+        $files = fc()->from($path);
 
-        if (!empty($files)) {
-
-            foreach ($files as $file) {
-                $name = pathinfo($file, PATHINFO_FILENAME);
-
-                $extension = pathinfo($file, PATHINFO_EXTENSION);
-
-                if ($extension == 'php') {
-                    $class = $namespace . $name;
+        if ($files instanceof FileCollection) {
+            $files->each(function ($file) use ($namespace) {
+                $file = f($file);
+                if ($file->extension() === "php") {
+                    $class = $namespace . $file->name();
                     $class = new $class();
 
                     if ($class instanceof Command) {
                         $this->add($class);
                     }
                 }
-            }
+            });
         }
 
         $kernel = new Kernel();
@@ -60,18 +63,6 @@ class Application extends SymfonyApplication
         foreach ($kernel->commands as $command) {
             $this->add(new $command());
         }
-    }
-
-    /**
-     * Skip specified files from the array.
-     *
-     * @param array $file The array of file names.
-     * @param array $skip The list of file names to skip.
-     * @return array The filtered array of file names.
-     */
-    private function skipFiles(array $file, array $skip): array
-    {
-        return array_diff($file, $skip);
     }
 
     /**
