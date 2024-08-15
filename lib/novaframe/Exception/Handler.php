@@ -2,7 +2,6 @@
 
 namespace Nova\Exception;
 
-use Nova\Exception\Helper\ExceptionDisplay;
 use Nova\Facade\Log;
 use Nova\HTTP\IncomingRequest;
 use Nova\HTTP\Response;
@@ -139,7 +138,7 @@ class Handler implements HandlerInterface
         $formatted['severity'] = self::DEBUG_LEVELS[E_ERROR];
 
         if (method_exists($exception, 'getSeverity')) {
-            $formatted['severity'] = self::DEBUG_LEVELS[$exception->getSeverity()];
+            $formatted['severity'] = self::DEBUG_LEVELS[$exception->getSeverity()] ?? self::DEBUG_LEVELS[E_ERROR];
         }
 
         $request = IncomingRequest::createFromGlobals();
@@ -158,7 +157,7 @@ class Handler implements HandlerInterface
 
         $path = rtrim($config['paths']['exception'], '/') . DIRECTORY_SEPARATOR . $environment . DIRECTORY_SEPARATOR;
 
-        $novaframeExceptionHelper = new ExceptionDisplay($formatted);
+        $beautify = new Beautify($formatted);
 
         extract($formatted);
 
