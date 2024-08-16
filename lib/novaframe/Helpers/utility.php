@@ -129,3 +129,32 @@ if (!function_exists('di')) {
         return new \Nova\Helpers\Modules\DependencyInjection($class);
     }
 }
+
+if (!function_exists('stash')) {
+    /**
+     * Get or set a value in the Stash service.
+     *
+     * If a key is provided, this function retrieves the value associated with the key.
+     * If no key is provided, it returns the Stash instance itself.
+     *
+     * Example usage:
+     * - stash('user.name') // Get the value associated with 'user.name'
+     * - stash('user.name', 'John Doe') // Set 'user.name' to 'John Doe'
+     * - stash() // Get the Stash instance
+     *
+     * @param string|null $key The key to retrieve from the Stash. If null, returns the Stash instance.
+     * @param mixed $default The default value to return if the key is not found. (Unused in this version)
+     *
+     * @return mixed|\Nova\Service\Stash\Stash The value associated with the key or the Stash instance.
+     */
+    function stash(string $key = null, mixed $default = null): mixed
+    {
+        $stash = service("stash", true); // $share -> true
+
+        if ($key !== null) {
+            return $stash->get($key);
+        }
+
+        return $stash;
+    }
+}

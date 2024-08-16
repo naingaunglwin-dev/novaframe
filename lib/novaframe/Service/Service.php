@@ -19,6 +19,7 @@ class Service
         'session'   => \Nova\Service\Session\Session::class,
         'bootstrap' => \Nova\Service\Bootstrap\Bootstrap::class,
         'cookie'    => \Nova\Service\Cookie\Cookie::class,
+        'stash'     => \Nova\Service\Stash\Stash::class,
     ];
 
     private Container $container;
