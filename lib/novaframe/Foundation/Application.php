@@ -14,7 +14,7 @@ class Application extends Container
      *
      * @var string
      */
-    protected string $version = '1.0.0';
+    private const VERSION = '1.0.0';
 
     /**
      * Application's locale
@@ -35,7 +35,7 @@ class Application extends Container
      */
     public function version(): string
     {
-        return $this->version;
+        return Application::VERSION;
     }
 
     /**
