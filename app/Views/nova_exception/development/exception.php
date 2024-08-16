@@ -18,7 +18,7 @@
     <!-- Google Font (Inter) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
 
     <!-- Fontawesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -192,6 +192,11 @@
             display: flex;
             justify-content: center;
             padding-inline-start: 0;
+            margin-block-start: 0;
+            margin-block-end: 0;
+            padding: 1rem 0;
+            margin-bottom: 5px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.4);
         }
 
         .nav ul li {
@@ -222,7 +227,6 @@
             padding: 30px 15px 0 15px;
             height: 80vh;
             overflow-y: scroll;
-            border-top: 1px solid rgba(255, 255, 255, 0.4);
         }
 
         .group .title::-webkit-scrollbar,
@@ -231,12 +235,52 @@
             display: none;
         }
 
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .backtrace {
+            opacity: 0;
+            pointer-events: none;
+            display: none;
+        }
+
+        .backtrace.active {
+            -webkit-animation: .3s fadeIn;
+            animation: .3s fadeIn;
+            opacity: 1;
+            pointer-events: all;
+            display: block;
+            z-index: 1;
+        }
+
+        .file {
+            opacity: 0;
+            pointer-events: none;
+            display: none;
+        }
+
+        .file.active {
+            -webkit-animation: .3s fadeIn;
+            animation: .3s fadeIn;
+            opacity: 1;
+            pointer-events: all;
+            display: block;
+        }
+
         .file ul li {
             list-style: decimal;
             margin: 10px 0;
             padding-left: 10px;
             text-align: start;
             font-size: 11pt;
+            line-height: 20px;
+            white-space: nowrap;
         }
 
         footer {
@@ -1518,10 +1562,10 @@ className:"string"}),{className:"string",begin:/<.*?>/,end:/$/,illegal:"\\n"
             </div>
 
             <div class="body">
-                <div class="backtrace page">
+                <div class="backtrace active page">
                     <?php $beautify->display('traceMessages'); ?>
                 </div>
-                <div class="file page" style="display: none">
+                <div class="file page">
                     <?php $prepared = []; $base = config('app.base_path'); foreach (array_reverse(get_included_files()) as $file) : ?>
                         <?php if (!str_contains($file, 'Exception') && !str_contains($file, 'exception')) : ?>
                             <?php
@@ -1632,13 +1676,13 @@ className:"string"}),{className:"string",begin:/<.*?>/,end:/$/,illegal:"\\n"
         });
 
         pages.forEach((p) => {
-            p.style.display = "none";
+            p.classList.remove("active");
         });
 
         let active = document.querySelector(`.page.${name}`);
         let navActive = document.querySelector(`.nav ul li.nav-${name}`);
 
-        active.style.display = "block";
+        active.classList.add("active");
         navActive.classList.add("active");
     }
 
