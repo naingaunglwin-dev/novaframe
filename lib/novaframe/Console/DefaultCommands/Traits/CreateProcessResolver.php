@@ -140,7 +140,7 @@ trait CreateProcessResolver
 
         $content = $matches[1];
 
-        $content = sprintf($content, $namespace, $class, $table ?? '');
+        $content = $file ===  "command" ? sprintf($content, $namespace, $class, sprintf("run:%s", strtolower($class))) : sprintf($content, $namespace, $class, $table ?? '');
 
         $content .= "\n";
 

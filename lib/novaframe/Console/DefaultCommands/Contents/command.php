@@ -15,7 +15,7 @@ class %s extends Command
      *
      * @var string
      */
-    protected string $name = 'make:command';
+    protected string $name = '%s';
         
     /**
      * The description of the console command.
