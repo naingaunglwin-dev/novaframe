@@ -7,7 +7,7 @@ use ReflectionClass;
 use ReflectionException;
 use ReflectionFunction;
 
-class ResolveDependencies
+class DependencyInjection
 {
     /**
      * Class to resolve
@@ -17,7 +17,7 @@ class ResolveDependencies
     private string|object $class = '';
 
     /**
-     * ResolveDependencies constructor.
+     * DependencyInjection constructor.
      *
      * @param string|object|null $class The class name to resolve dependencies for.
      * @throws InvalidArgumentException If the class does not exist.

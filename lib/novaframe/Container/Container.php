@@ -147,7 +147,7 @@ class Container
             return $this->getInstanceOfAbstract($abstract);
         }
 
-        $output = fn () => !empty($parameters) ? call_user_func((new $bind['factory'](...$parameters))) : resolver()->constructor($bind['factory']);
+        $output = fn () => !empty($parameters) ? call_user_func((new $bind['factory'](...$parameters))) : di()->constructor($bind['factory']);
 
         if ($bind['share'] === true) {
             $this->setInstance($abstract, $output());

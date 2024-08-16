@@ -72,7 +72,7 @@ class ControllerResolver
             );
         }
 
-        $result = resolver($this->controller)->method($this->method);
+        $result = di($this->controller)->method($this->method);
 
         if ($result instanceof Response) {
             return $result->send();

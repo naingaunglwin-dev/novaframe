@@ -142,7 +142,7 @@ class Bootstrap
 
             foreach ($processes as $process) {
                 if (is_callable($process)) {
-                    resolver()->callback($process);
+                    di()->callback($process);
                 }
             }
         }

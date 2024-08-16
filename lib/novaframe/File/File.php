@@ -254,7 +254,7 @@ class File
      */
     public function includeWhen(callable $callback)
     {
-        if (resolver()->callback($callback) === true) {
+        if (di()->callback($callback) === true) {
             $this->include();
         }
     }
@@ -343,7 +343,7 @@ class File
      */
     public function unlinkWhen(callable $callback): void
     {
-        if (resolver()->callback($callback) === true) {
+        if (di()->callback($callback) === true) {
             $this->unlink();
         }
     }

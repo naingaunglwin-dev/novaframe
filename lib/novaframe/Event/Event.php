@@ -3,7 +3,7 @@
 namespace Nova\Event;
 
 use InvalidArgumentException;
-use Nova\Helpers\Modules\ResolveDependencies;
+use Nova\Helpers\Modules\DependencyInjection;
 use Nova\Event\Exceptions\InvalidListenerType;
 use Nova\Exception\Exceptions\ClassException;
 
@@ -17,9 +17,9 @@ class Event
     private static array $listeners = [];
 
     /**
-     * @var ResolveDependencies
+     * @var DependencyInjection
      */
-    private ResolveDependencies $resolver;
+    private DependencyInjection $resolver;
 
     /**
      * Deferred events
@@ -40,7 +40,7 @@ class Event
      */
     public function __construct()
     {
-        $this->resolver = new ResolveDependencies();
+        $this->resolver = new DependencyInjection();
     }
 
     /**

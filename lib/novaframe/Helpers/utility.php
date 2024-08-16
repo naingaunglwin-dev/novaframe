@@ -116,16 +116,16 @@ if (!function_exists('service')) {
     }
 }
 
-if (!function_exists('resolver')) {
+if (!function_exists('di')) {
     /**
-     * Creates a new instance of ResolveDependencies.
+     * Creates a new instance of DependencyInjection.
      *
      * @param string|object|null $class The class name or object to resolve dependencies for.
-     * @return \Nova\Helpers\Modules\ResolveDependencies The ResolveDependencies instance.
+     * @return \Nova\Helpers\Modules\DependencyInjection The DependencyInjection instance.
      * @throws InvalidArgumentException If the class does not exist.
      */
-    function resolver(string|object $class = null): \Nova\Helpers\Modules\ResolveDependencies
+    function di(string|object $class = null): \Nova\Helpers\Modules\DependencyInjection
     {
-        return new \Nova\Helpers\Modules\ResolveDependencies($class);
+        return new \Nova\Helpers\Modules\DependencyInjection($class);
     }
 }
