@@ -108,7 +108,7 @@ class RouteDispatcher
      */
     public function add(string $from, string|array|callable $to, string|array $method, string $name = null, bool $isGroup = false, string $prefix = ''): void
     {
-        $this->doAdd(
+        $this->_add(
             $from,
             $to,
             $this->convert2uppercase($method),
@@ -152,7 +152,7 @@ class RouteDispatcher
      * @param string $prefix
      * @return void
      */
-    private function doAdd(string $from, string|array|callable $to, string|array $method, string $name = null, bool $isGroup = false, string $prefix = ''): void
+    private function _add(string $from, string|array|callable $to, string|array $method, string $name = null, bool $isGroup = false, string $prefix = ''): void
     {
         if (empty($from) || !str_starts_with($from, '/')) {
             $from = '/' . $from;
@@ -281,7 +281,7 @@ class RouteDispatcher
     private function render(mixed $response, IncomingRequestInterface $request): mixed
     {
         if (!$response) {
-            return $this->doRender('notFound', '', 'url', $request->getFullUrl());
+            return $this->_render('notFound', '', 'url', $request->getFullUrl());
         }
 
         $type = function () use ($response) {
@@ -292,7 +292,7 @@ class RouteDispatcher
             };
         };
 
-        return $this->doRender($type(), $response);
+        return $this->_render($type(), $response);
     }
 
     /**
@@ -303,7 +303,7 @@ class RouteDispatcher
      * @param ...$data
      * @return mixed|void|null
      */
-    private function doRender(string $type, mixed $resource = '', ...$data)
+    private function _render(string $type, mixed $resource = '', ...$data)
     {
         switch ($type) {
             case 'view':
@@ -325,8 +325,8 @@ class RouteDispatcher
 
                 $resolver->resolve(
                     $resource,
-                    fn ($controller) => $this->doRender('notFound', '', 'controller', $controller . '( )'),
-                    fn ($controller, $method) => $this->doRender('notFound', 'method', sprintf('%s%s', $controller::class, $method))
+                    fn ($controller) => $this->_render('notFound', '', 'controller', $controller . '( )'),
+                    fn ($controller, $method) => $this->_render('notFound', 'method', sprintf('%s%s', $controller::class, $method))
                 );
 
                 return $resolver->action();
