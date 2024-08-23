@@ -28,7 +28,7 @@ class Language
 
     public function __construct()
     {
-        $this->locale = app()->getLocale();
+        $this->locale = app()->locale();
     }
 
     /**

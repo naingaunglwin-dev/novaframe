@@ -112,34 +112,30 @@ class Application extends Container
     }
 
     /**
-     * Sets the locale of the application.
+     * Set or get the application's locale.
      *
-     * This method sets the locale of the application to the specified value.
-     * If the provided locale is not in the list of allowed locales configured in the application,
-     * an InvalidArgumentException is thrown.
+     * This allows you to either set the application's locale or retrieve the current locale.
      *
-     * @param string $locale The new locale to set.
-     * @throws \InvalidArgumentException If the specified locale is not allowed.
-     * @return void
+     * - If a locale is passed as an argument, the method will set it as the application's locale
+     *   (if it is in the list of allowed locales) and return the updated locale.
+     * - If no argument is passed, the method will simply return the currently set locale.
+     *
+     * @param string|null $locale The locale to set, or null to get the current locale.
+     * @return string The current or updated locale.
+     * @throws \InvalidArgumentException If the provided locale is not allowed.
      */
-    public function setLocale(string $locale)
+    public function locale(string $locale = null): string
     {
-        $allowedLocales = config('app.locales.list');
+        if ($locale !== null) {
+            $allowedLocales = config('app.locales.list');
 
-        if (!in_array($locale, $allowedLocales)) {
-            throw new \InvalidArgumentException("Locale '{$locale}' is not allowed");
+            if (!in_array($locale, $allowedLocales)) {
+                throw new \InvalidArgumentException("Locale '{$locale}' is not allowed.");
+            }
+
+            $this->locale = $locale;
         }
 
-        $this->locale = $locale;
-    }
-
-    /**
-     * Gets the current locale of the application.
-     *
-     * @return string The current locale.
-     */
-    public function getLocale(): string
-    {
         return $this->locale;
     }
 
