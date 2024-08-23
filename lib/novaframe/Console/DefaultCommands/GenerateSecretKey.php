@@ -102,6 +102,13 @@ class GenerateSecretKey extends Command
                 return !str_starts_with(trim($line), 'APP_KEY=');
             });
 
+            // In case PHP_EOL doesn't work for line separation
+            if (count($lines) < 2) {
+                $lines = array_filter(explode("\n", $content), function($line) {
+                    return !str_starts_with(trim($line), 'APP_KEY=');
+                });
+            }
+
             $appGroupLine = $this->getAppGroup($lines);
 
             if ($appGroupLine === null) {
