@@ -143,13 +143,12 @@ if (!function_exists('stash')) {
      * - stash() // Get the Stash instance
      *
      * @param string|null $key The key to retrieve from the Stash. If null, returns the Stash instance.
-     * @param mixed $default The default value to return if the key is not found. (Unused in this version)
      *
      * @return mixed|\Nova\Service\Stash\Stash The value associated with the key or the Stash instance.
      */
-    function stash(string $key = null, mixed $default = null): mixed
+    function stash(string $key = null): mixed
     {
-        $stash = service("stash", true); // $share -> true
+        $stash = service("stash")::getInstance();
 
         if ($key !== null) {
             return $stash->get($key);

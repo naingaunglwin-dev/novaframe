@@ -11,7 +11,7 @@ class Stash
      *
      * @var array
      */
-    private static array $data = [];
+    private array $data = [];
 
     /**
      * The singleton instance of the Stash class
@@ -22,18 +22,9 @@ class Stash
 
     /**
      * Stash constructor
-     *
-     * @param bool $share Whether to use as singleton instance
      */
-    public function __construct(bool $share = false)
+    public function __construct()
     {
-        if ($share) {
-            if (empty(self::$instance)) {
-                self::$instance = new Stash();
-            }
-
-            return self::$instance;
-        }
     }
 
     /**
@@ -45,7 +36,7 @@ class Stash
      */
     public function put(string $key, mixed $value): Stash
     {
-        self::$data[$key] = $value;
+        $this->data[$key] = $value;
 
         return $this;
     }
@@ -80,6 +71,12 @@ class Stash
 
     /**
      * Push a value onto an array at the specified key.
+     *
+     * <h4>Remind</h2>
+     *
+     * If the key already exists and the value is not an array, it will be converted
+     * into an array with the existing value as its first element, before the new value
+     * is pushed onto it.
      *
      * @param string $key The key to push the value onto.
      * @param mixed $value The value to push.
@@ -127,7 +124,7 @@ class Stash
             return;
         }
 
-        $current = &self::$data;
+        $current = &$this->data;
 
         foreach ($keys as $index => $k) {
             if (Str::equal2($k, "*")) {
@@ -151,5 +148,29 @@ class Stash
                 }
             } else return;
         }
+    }
+
+    /**
+     * Get singleton instance of stash
+     *
+     * @return Stash
+     */
+    public static function getInstance(): Stash
+    {
+        if (empty(self::$instance)) {
+            self::$instance = new Stash();
+        }
+
+        return self::$instance;
+    }
+
+    /**
+     * Return a new instance of stash
+     *
+     * @return Stash
+     */
+    public function new(): Stash
+    {
+        return new Stash();
     }
 }
