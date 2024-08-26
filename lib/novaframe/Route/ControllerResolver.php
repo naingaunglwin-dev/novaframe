@@ -50,7 +50,7 @@ class ControllerResolver
         if ($this->verifyMethod($controller, $method)) {
             $this->method = $method;
         } else {
-            call_user_func($methodException, $controller, $method);
+            call_user_func($methodException, $this->controller, $method);
             exit();
         }
 

@@ -23,7 +23,7 @@
         body {
             margin: 0;
             padding: 0;
-            background: aliceblue;
+            background-color: #1d2023;
             font-family: "Inter", sans-serif;
         }
 
@@ -34,13 +34,24 @@
         }
 
         div.container div.text-box {
-            background: white;
-            border-radius: 9px;
-            padding: 10px 25px;
+            border-radius: 6px;
+            background: #22262b;
+            border: 1px solid rgba(255, 255, 255, 0.1);
             text-align: center;
+            margin-bottom: 50px;
+            color: #b1b1b1;
+            padding: 0 20px;
+            font-size: 14pt;
+        }
+        
+        @media screen and (max-width: 420px) {
+            div.container div.text-box {
+                font-size: 11pt;
+                padding: 0 17px;
+            }
         }
 
-        div.container div.text-box h2 {
+        div.container div.text-box p {
             line-height: 35px;
         }
 
@@ -78,7 +89,7 @@
         div.logo-box a {
             text-decoration: none;
             font-size: 11pt!important;
-            color: black;
+            color: white;
             margin-bottom: 10px;
         }
     </style>
@@ -88,15 +99,15 @@
     <div class="container">
         <div class="text-box">
             <?php if ($type === 'url'): ?>
-                <h2><?php echo lang('exception.UrlNotFound', "<br><span>$resource</span><br>") ?></h2>
+                <p><?php echo lang('exception.UrlNotFound', "<br><span>$resource</span><br>") ?></p>
             <?php elseif ($type === 'view'): ?>
-                <h2><?php echo lang('exception.PageNotFound', "<br><span> $resource </span>") ?></h2>
+                <p><?php echo lang('exception.PageNotFound', "<br><span> $resource </span>") ?></p>
             <?php elseif ($type === 'controller'): ?>
-                <h2><?php echo lang('exception.ControllerNotFound') ?></h2>
-                <h2 class="color-red"><?php echo $resource ?></h2>
+                <p><?php echo lang('exception.ControllerNotFound') ?></p>
+                <p class="color-red"><?php echo $resource ?></p>
             <?php elseif ($type === 'method'): ?>
-                <h2><?php echo lang('exception.MethodNotFound') ?></h2>
-                <h2 class="color-red"><?php echo $resource ?></h2>
+                <p><?php echo lang('exception.MethodNotFound') ?></p>
+                <p class="color-red"><?php echo $resource ?></p>
             <?php endif; ?>
         </div>
     </div>

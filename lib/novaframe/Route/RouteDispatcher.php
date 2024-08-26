@@ -326,7 +326,7 @@ class RouteDispatcher
                 $resolver->resolve(
                     $resource,
                     fn ($controller) => $this->_render('notFound', '', 'controller', $controller . '( )'),
-                    fn ($controller, $method) => $this->_render('notFound', 'method', sprintf('%s%s', $controller::class, $method))
+                    fn ($controller, $method) => $this->_render('notFound', '', 'method', sprintf('%s::%s( )', $controller::class, $method))
                 );
 
                 return $resolver->action();
@@ -337,7 +337,7 @@ class RouteDispatcher
 
             default:
 
-                return call_user_func($resource);
+                return di()->callback($resource);
         }
     }
 
