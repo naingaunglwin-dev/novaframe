@@ -2,6 +2,7 @@
 
 namespace Nova\Route;
 
+use Nova\Helpers\Modules\Str;
 use Nova\Middleware\Middleware;
 
 class Route
@@ -83,7 +84,12 @@ class Route
         ];
 
         if (!empty($this->middlewares)) {
-            $this->dispatcher->addMiddleware($method, $this->middlewares, $this->current['route']);
+            RouteMiddleware::add(
+                method: $method,
+                route: $this->current['route'],
+                middleware: $this->middlewares,
+                name: sprintf("%s~%s", Str::toUpper($method), $this->current['route'])
+            );
         }
 
         return $this;
@@ -210,8 +216,15 @@ class Route
      */
     public function middleware(string|array|Middleware $middleware): Route
     {
-        if ($this->current['route'] !== self::DEFAULT_ROUTE) {
-            $this->dispatcher->addMiddleware($this->current['method'], $middleware, $this->current['route']);
+        $current = $this->current;
+
+        if ($current['route'] !== self::DEFAULT_ROUTE) {
+            RouteMiddleware::add(
+                method: $current['method'],
+                route: $current['route'],
+                middleware: $middleware,
+                name: sprintf("%s~%s", Str::toUpper($current['method']), $current['route'])
+            );
         }
         $this->middlewares[] = $middleware;
 
@@ -234,7 +247,7 @@ class Route
         $this->preparedPrefix($prefix, true);
         self::$isGroup = true;
 
-        call_user_func($action);
+        di()->callback($action);
 
         $groups = $this->dispatcher->getRouteGroups();
 
@@ -242,7 +255,12 @@ class Route
             foreach ($groups[self::$prefix] as $method => $array) {
                 foreach ($array as $route) {
                     if (!empty($this->middlewares)) {
-                        $this->dispatcher->addMiddleware($method, $this->middlewares, $route);
+                        RouteMiddleware::add(
+                            method: $method,
+                            route: $route,
+                            middleware: $this->middlewares,
+                            name: sprintf("%s~%s", Str::toUpper($method), $route)
+                        );
                     }
                 }
 

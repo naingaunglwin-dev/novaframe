@@ -6,8 +6,6 @@ use InvalidArgumentException;
 use Nova\HTTP\DynamicParameters;
 use Nova\HTTP\IncomingRequestInterface;
 use Nova\HTTP\Response;
-use Nova\Middleware\Middleware;
-use Nova\Middleware\MiddlewareHandler;
 use Nova\View\View;
 
 class RouteDispatcher
@@ -25,13 +23,6 @@ class RouteDispatcher
      * @var array
      */
     private static array $names = [];
-
-    /**
-     * The list of route middlewares.
-     *
-     * @var array
-     */
-    private static array $middlewares = [];
 
     /**
      * The list of route groups.
@@ -119,29 +110,6 @@ class RouteDispatcher
     }
 
     /**
-     * Add route middleware
-     *
-     * @param string|array $method
-     * @param string|array|Middleware $middleware
-     * @param string $from
-     * @return void
-     */
-    public function addMiddleware(string|array $method, string|array|Middleware $middleware, string $from): void
-    {
-        $method = $this->convert2uppercase($method);
-
-        $this->checkMethod($method);
-
-        if (is_array($method)) {
-            foreach ($method as $m) {
-                self::$middlewares[$m][$from][] = $middleware;
-            }
-        } else {
-            self::$middlewares[$method][$from][] = $middleware;
-        }
-    }
-
-    /**
      * Add defined route to class
      *
      * @param string $from
@@ -204,9 +172,10 @@ class RouteDispatcher
      */
     public function dispatch(IncomingRequestInterface $request): mixed
     {
-        $middleware = new MiddlewareHandler();
-
-        $request = $middleware->handleDefault($request);
+        $request = RouteMiddleware::handle(
+            name: "default",
+            request: $request
+        );
 
         $userRequest = $request->getRequestUri();
 
@@ -226,13 +195,13 @@ class RouteDispatcher
         $method = $request->getMethod();
         $result = $this->findMatchResult($method, $userRequest);
 
-        $passRouteMiddleware = self::$middlewares[$method][$this->currentRoute] ?? [];
-
-        if (!empty($passRouteMiddleware)) {
-            $request = $middleware->handle($request, $passRouteMiddleware);
-        }
-
-        return $this->render($result, $request);
+        return $this->render(
+            $result,
+            RouteMiddleware::handle(
+                name: sprintf("%s~%s", $method, $this->currentRoute),
+                request: $request
+            )
+        );
     }
 
     /**
