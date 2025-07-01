@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="https://raw.githubusercontent.com/naingaunglwin-dev/novaframe/master/public/logo.png" alt="NovaFrame Logo" width="200" />
+
 # NovaFrame
 
 ![Status](https://img.shields.io/badge/version-beta-green)
