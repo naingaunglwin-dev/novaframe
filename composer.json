@@ -36,5 +36,11 @@
         "nesbot/carbon": "^3.10",
         "nette/database": "^3.2",
         "symfony/process": "^7.3"
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "@php -r \"if (!file_exists('.env')) { copy('.env.example', '.env'); echo '.env file created from .env.example\\n'; }; \"",
+            "@php nova key:generate"
+        ]
     }
 }
