@@ -37,10 +37,12 @@
         "nette/database": "^3.2",
         "symfony/process": "^7.3"
     },
+    "require-dev": {
+        "phpunit/phpunit": "^11.5"
+    },
     "scripts": {
         "post-install-cmd": [
-            "@php -r \"if (!file_exists('.env')) { copy('.env.example', '.env'); echo '.env file created from .env.example\\n'; }; \"",
-            "@php nova key:generate"
+            "@php lib/composer-post-install-script.php"
         ]
     }
 }
