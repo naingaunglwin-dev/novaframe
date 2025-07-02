@@ -1,8 +1,12 @@
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/naingaunglwin-dev/novaframe/master/public/logo.png" alt="NovaFrame Logo" width="200" />
+<img src="https://raw.githubusercontent.com/naingaunglwin-dev/novaframe/master/public/logo.png" alt="NovaFrame Logo" width="150" />
 
 # NovaFrame
+
+---
+
+<img src="https://raw.githubusercontent.com/naingaunglwin-dev/novaframe/master/public/welcome.png" alt="NovaFrame Welcome Page" width="1300">
 
 ![Status](https://img.shields.io/badge/version-beta-green)
 
@@ -30,6 +34,3 @@
 ## Run
 - run using web server: access `http://localhost/{project-name}`
 - run through command: navigate to project root dir and run `php nova serve`
-
----
-
