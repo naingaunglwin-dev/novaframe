@@ -334,10 +334,6 @@ class Container
             $name = $builtInParameter->getName();
             $type = $builtInParameter->getType();
 
-            if ($builtInParameter->isOptional()) {
-                continue;
-            }
-
             if (array_key_exists($name, $explicitParameters)) {
                 $resolvedDependencies[] = $explicitParameters[$name]; // skip to resolve if param exists in given param list by user
                 continue;
