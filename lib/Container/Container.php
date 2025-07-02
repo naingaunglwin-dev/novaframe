@@ -199,7 +199,9 @@ class Container
             if ($concrete instanceof \Closure || method_exists($concrete, '__invoke')) {
                 return $this->resolveCallable($concrete, $parameters);  // It's a callable object (Closure or object with __invoke)
             }
-            return $this->resolveClass($concrete, $parameters);  // It's a regular class object
+
+            // If we reach here, the concrete is already an instantiated object, so we return it directly
+            return $concrete;
         }
 
         // If it's a string, check if it's a class name or a callable function (like 'function_name' or 'ClassName::method')
@@ -214,9 +216,11 @@ class Container
             }
         }
 
-        // If it's a callable (like [$object, 'method'])
-        if (is_callable($concrete)) {
-            return $this->resolveCallable($concrete, $parameters);  // It's a general callable (function, method, etc.)
+        // If it's a object-method array (like [$object, 'method'])
+        if (is_array($concrete) && count($concrete) === 2) {
+            [$class, $method] = $concrete;
+
+            return $this->resolveMethod($class, $method, $parameters);
         }
 
         // Default fallback: handle any other case as a class name
@@ -271,8 +275,18 @@ class Container
      */
     private function resolveMethod(string|object $concrete, string $method, array $parameters = [])
     {
+        // If concrete is neither class string nor class object,
+        // find through in definitions
+        if (!is_object($concrete) && !class_exists($concrete)) {
+            if (!isset($this->definitions[$concrete])) {
+                throw new \InvalidArgumentException('Class ' . $concrete . ' does not exist.');
+            }
+
+            $concrete = $this->definitions[$concrete];
+        }
+
         if (!method_exists($concrete, $method)) {
-            throw new \InvalidArgumentException('Method ' . $concrete . ' does not exist.');
+            throw new \InvalidArgumentException('Method ' . $method . ' does not exist.');
         }
 
         $reflection = new \ReflectionMethod($concrete, $method);
@@ -322,30 +336,19 @@ class Container
             $name = $builtInParameter->getName();
             $type = $builtInParameter->getType();
 
-            if ($builtInParameter->isOptional()) {
-                continue;
-            }
-
             if (array_key_exists($name, $explicitParameters)) {
                 $resolvedDependencies[] = $explicitParameters[$name]; // skip to resolve if param exists in given param list by user
                 continue;
             }
 
+            // if param has a default value, no need to resolve
+            if ($builtInParameter->isDefaultValueAvailable()) {
+                $resolvedDependencies[] = $builtInParameter->getDefaultValue();
+                continue;
+            }
+
             if ($type instanceof ReflectionNamedType && !$type->isBuiltin()) {
-                $dependencyClass = $type->getName();
-
-                if (isset($this->shared[$dependencyClass])) {
-                    // If not yet resolved, resolve and cache it
-                    if (!$this->isResolved($dependencyClass)) {
-                        $concrete = $this->shared[$dependencyClass];
-                        $this->shared[$dependencyClass] = $this->resolveUponType($concrete);
-                        $this->markedAsResolved($dependencyClass);
-                    }
-
-                    $resolvedDependencies[] = $this->shared[$dependencyClass];
-                } else {
-                    $resolvedDependencies[] = $this->resolveClass($dependencyClass);
-                }
+                $resolvedDependencies[] = $this->resolveClassDependencies($type->getName());
                 continue;
             }
 
@@ -353,34 +356,40 @@ class Container
 
                 foreach ($type->getTypes() as $innerType) {
                     if ($innerType instanceof ReflectionNamedType && !$innerType->isBuiltin()) {
-                        $dependencyClass = $innerType->getName();
-                        if (isset($this->shared[$dependencyClass])) {
-                            // If not yet resolved, resolve and cache it
-                            if (!$this->isResolved($dependencyClass)) {
-                                $concrete = $this->shared[$dependencyClass];
-                                $this->shared[$dependencyClass] = $this->resolveUponType($concrete);
-                                $this->markedAsResolved($dependencyClass);
-                            }
-
-                            $resolvedDependencies[] = $this->shared[$dependencyClass];
-                        } else {
-                            $resolvedDependencies[] = $this->resolveClass($dependencyClass);
-                        } // resolve manually if param isn't built in
-
+                        $resolvedDependencies[] = $this->resolveClassDependencies($innerType->getName());
                         continue 2;
                     }
                 }
-            }
-
-            if ($builtInParameter->isDefaultValueAvailable()) {
-                $resolvedDependencies[] = $builtInParameter->getDefaultValue();
-                continue;
             }
 
             throw new \RuntimeException("Cannot resolve dependency \${$name}");
         }
 
         return $resolvedDependencies;
+    }
+
+    /**
+     * Resolve Class Dependency
+     *
+     * @param $class
+     * @return mixed|object
+     */
+    private function resolveClassDependencies($class)
+    {
+        // Triggered when the dependency class is registered as a singleton binding
+        if (isset($this->shared[$class])) {
+            // If not yet resolved, resolve and cache it
+            if (!$this->isResolved($class)) {
+                $concrete = $this->shared[$class];
+                $this->shared[$class] = $this->resolveUponType($concrete);
+                $this->markedAsResolved($class);
+            }
+
+            return $this->shared[$class];
+        }
+
+        // resolve manually if param isn't built in
+        return $this->resolveClass($class);
     }
 
     /**
