@@ -277,7 +277,7 @@ class Container
     {
         // If concrete is neither class string nor class object,
         // find through in definitions
-        if (!class_exists($concrete)) {
+        if (!is_object($concrete) && !class_exists($concrete)) {
             if (!isset($this->definitions[$concrete])) {
                 throw new \InvalidArgumentException('Class ' . $concrete . ' does not exist.');
             }
