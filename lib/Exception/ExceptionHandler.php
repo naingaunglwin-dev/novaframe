@@ -70,12 +70,12 @@ class ExceptionHandler
         include $this->fallback;
         $output = ob_get_clean();
 
-        $response = app()->make(Response::class);
+        $response = new Response();
         $response->setContent($output)
             ->setStatusCode(500)
             ->send();
 
-        $response->restore();
+        $response->clean();
 
         return true;
     }
