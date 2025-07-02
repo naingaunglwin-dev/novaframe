@@ -4,8 +4,6 @@
 
 # NovaFrame
 
----
-
 <img src="https://raw.githubusercontent.com/naingaunglwin-dev/novaframe/master/public/welcome.png" alt="NovaFrame Welcome Page" width="1300">
 
 ![Status](https://img.shields.io/badge/version-beta-green)
