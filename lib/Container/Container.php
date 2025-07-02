@@ -284,7 +284,7 @@ class Container
         }
 
         if (!method_exists($concrete, $method)) {
-            throw new \InvalidArgumentException('Method ' . $concrete . ' does not exist.');
+            throw new \InvalidArgumentException('Method ' . $method . ' does not exist.');
         }
 
         $reflection = new \ReflectionMethod($concrete, $method);
