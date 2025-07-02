@@ -216,9 +216,11 @@ class Container
             }
         }
 
-        // If it's a callable (like [$object, 'method'])
-        if (is_callable($concrete)) {
-            return $this->resolveCallable($concrete, $parameters);  // It's a general callable (function, method, etc.)
+        // If it's a object-method array (like [$object, 'method'])
+        if (is_array($concrete) && count($concrete) === 2) {
+            [$class, $method] = $concrete;
+
+            return $this->resolveMethod($class, $method, $parameters);
         }
 
         // Default fallback: handle any other case as a class name
@@ -374,6 +376,7 @@ class Container
      */
     private function resolveClassDependencies($class)
     {
+        // Triggered when the dependency class is registered as a singleton binding
         if (isset($this->shared[$class])) {
             // If not yet resolved, resolve and cache it
             if (!$this->isResolved($class)) {
