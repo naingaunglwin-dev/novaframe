@@ -339,6 +339,12 @@ class Container
                 continue;
             }
 
+            // if param has a default value, no need to resolve
+            if ($builtInParameter->isDefaultValueAvailable()) {
+                $resolvedDependencies[] = $builtInParameter->getDefaultValue();
+                continue;
+            }
+
             if ($type instanceof ReflectionNamedType && !$type->isBuiltin()) {
                 $resolvedDependencies[] = $this->resolveClassDependencies($type->getName());
                 continue;
@@ -352,11 +358,6 @@ class Container
                         continue 2;
                     }
                 }
-            }
-
-            if ($builtInParameter->isDefaultValueAvailable()) {
-                $resolvedDependencies[] = $builtInParameter->getDefaultValue();
-                continue;
             }
 
             throw new \RuntimeException("Cannot resolve dependency \${$name}");
