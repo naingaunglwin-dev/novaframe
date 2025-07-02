@@ -344,20 +344,7 @@ class Container
             }
 
             if ($type instanceof ReflectionNamedType && !$type->isBuiltin()) {
-                $dependencyClass = $type->getName();
-
-                if (isset($this->shared[$dependencyClass])) {
-                    // If not yet resolved, resolve and cache it
-                    if (!$this->isResolved($dependencyClass)) {
-                        $concrete = $this->shared[$dependencyClass];
-                        $this->shared[$dependencyClass] = $this->resolveUponType($concrete);
-                        $this->markedAsResolved($dependencyClass);
-                    }
-
-                    $resolvedDependencies[] = $this->shared[$dependencyClass];
-                } else {
-                    $resolvedDependencies[] = $this->resolveClass($dependencyClass);
-                }
+                $resolvedDependencies[] = $this->resolveClassDependencies($type->getName());
                 continue;
             }
 
@@ -365,20 +352,7 @@ class Container
 
                 foreach ($type->getTypes() as $innerType) {
                     if ($innerType instanceof ReflectionNamedType && !$innerType->isBuiltin()) {
-                        $dependencyClass = $innerType->getName();
-                        if (isset($this->shared[$dependencyClass])) {
-                            // If not yet resolved, resolve and cache it
-                            if (!$this->isResolved($dependencyClass)) {
-                                $concrete = $this->shared[$dependencyClass];
-                                $this->shared[$dependencyClass] = $this->resolveUponType($concrete);
-                                $this->markedAsResolved($dependencyClass);
-                            }
-
-                            $resolvedDependencies[] = $this->shared[$dependencyClass];
-                        } else {
-                            $resolvedDependencies[] = $this->resolveClass($dependencyClass);
-                        } // resolve manually if param isn't built in
-
+                        $resolvedDependencies[] = $this->resolveClassDependencies($innerType->getName());
                         continue 2;
                     }
                 }
@@ -393,6 +367,29 @@ class Container
         }
 
         return $resolvedDependencies;
+    }
+
+    /**
+     * Resolve Class Dependency
+     *
+     * @param $class
+     * @return mixed|object
+     */
+    private function resolveClassDependencies($class)
+    {
+        if (isset($this->shared[$class])) {
+            // If not yet resolved, resolve and cache it
+            if (!$this->isResolved($class)) {
+                $concrete = $this->shared[$class];
+                $this->shared[$class] = $this->resolveUponType($concrete);
+                $this->markedAsResolved($class);
+            }
+
+            return $this->shared[$class];
+        }
+
+        // resolve manually if param isn't built in
+        return $this->resolveClass($class);
     }
 
     /**
