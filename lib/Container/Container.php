@@ -273,6 +273,16 @@ class Container
      */
     private function resolveMethod(string|object $concrete, string $method, array $parameters = [])
     {
+        // If concrete is neither class string nor class object,
+        // find through in definitions
+        if (!class_exists($concrete)) {
+            if (!isset($this->definitions[$concrete])) {
+                throw new \InvalidArgumentException('Class ' . $concrete . ' does not exist.');
+            }
+
+            $concrete = $this->definitions[$concrete];
+        }
+
         if (!method_exists($concrete, $method)) {
             throw new \InvalidArgumentException('Method ' . $concrete . ' does not exist.');
         }
