@@ -199,7 +199,9 @@ class Container
             if ($concrete instanceof \Closure || method_exists($concrete, '__invoke')) {
                 return $this->resolveCallable($concrete, $parameters);  // It's a callable object (Closure or object with __invoke)
             }
-            return $this->resolveClass($concrete, $parameters);  // It's a regular class object
+
+            // If we reach here, the concrete is already an instantiated object, so we return it directly
+            return $concrete;
         }
 
         // If it's a string, check if it's a class name or a callable function (like 'function_name' or 'ClassName::method')
