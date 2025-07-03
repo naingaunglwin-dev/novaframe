@@ -5,6 +5,7 @@ namespace NovaFrame\Console\Commands;
 use NovaFrame\Console\Command;
 use NovaFrame\Helpers\FileSystem\FileSystem;
 use NovaFrame\Route\RouteCollection;
+use Symfony\Component\Console\Input\InputOption;
 
 class RouteCache extends Command
 {
@@ -60,7 +61,14 @@ class RouteCache extends Command
      *
      * @var array
      */
-    protected array $options = [];
+    protected array $options = [
+        [
+            'name'        => 'force',
+            'short'       => 'f',
+            'mode'        => InputOption::VALUE_NONE,
+            'description' => 'Force overwrite the route cache without confirmation.',
+        ]
+    ];
 
     /**
      * Usage for command
@@ -74,7 +82,7 @@ class RouteCache extends Command
 
     public function handle()
     {
-        if (file_exists($this->cacheFile)) {
+        if (file_exists($this->cacheFile) && !$this->input->getOption('force')) {
             $this->io->box('Warning', 'white', 'yellow', newline: true);
             $this->io->warning(" {$this->cacheFile} is already exists.", true, ' ⚠');
             $this->io->newLine();
