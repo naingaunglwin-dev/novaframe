@@ -105,7 +105,7 @@ class ExceptionHandler
         }
 
         /** @var Response $response */
-        $response = app()->make(Response::class);
+        $response = new Response();
 
         if ($env === 'production') {
             $response->setContent(view('errors.production.500'))
@@ -115,8 +115,8 @@ class ExceptionHandler
             return true;
         }
 
-        if (ob_get_level()) {
-            ob_end_clean();
+        while (ob_get_level() > 0) {
+            @ob_end_clean();
         }
 
         ob_start();
