@@ -210,10 +210,20 @@ class Log
         }
 
         if ($format) {
-            $message = sprintf("%s [%s] %s\n", date('Y-m-d H:i:s'), $level, $message);
+            $datetime = date('Y-m-d H:i:s');
+
+            $array = compact('datetime', 'level', 'message');
+
+            $message = strtr(
+                config('log.format', '[%datetime%] [%level%] %message%'),
+                array_combine(
+                    array_map(fn($key) => '%' . $key . '%', array_keys($array)),
+                    array_values($array)
+                )
+            );
         }
 
-        file_put_contents(Path::join($this->path, $this->filename . '.log'), "\n$message", FILE_APPEND);
+        file_put_contents(Path::join($this->path, $this->filename . '.log'), "$message\n", FILE_APPEND);
     }
 
     /**
