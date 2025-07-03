@@ -209,6 +209,8 @@ class ExceptionHandler
 
             $count++;
         }
+
+        exit (1);
     }
 
     private function definedErrorReportingLevel()
