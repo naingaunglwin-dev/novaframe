@@ -112,4 +112,29 @@ class RouteCollection
     {
         return $this->routeNames[$name];
     }
+
+    /**
+     * Save the route and name collections from a cached route file.
+     *
+     * @param array $cached Cached route data containing 'routes' and 'names'.
+     * @return void
+     */
+    public function saveCached(array $cached): void
+    {
+        $this->routes = $cached['routes'] ?? [];
+        $this->routeNames = $cached['names'] ?? [];
+    }
+
+    /**
+     * Return all route collections
+     *
+     * @return array
+     */
+    public function all(): array
+    {
+        return [
+            'routes' => $this->routes,
+            'names' => $this->routeNames
+        ];
+    }
 }

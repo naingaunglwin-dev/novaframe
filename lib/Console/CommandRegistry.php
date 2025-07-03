@@ -22,5 +22,7 @@ class CommandRegistry
         \NovaFrame\Console\Commands\ClearSession::class,
         \NovaFrame\Console\Commands\StorageLink::class,
         \NovaFrame\Console\Commands\StorageUnlink::class,
+        \NovaFrame\Console\Commands\ConfigCache::class,
+        \NovaFrame\Console\Commands\RouteCache::class,
     ];
 }

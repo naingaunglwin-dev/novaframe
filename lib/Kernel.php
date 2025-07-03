@@ -12,6 +12,7 @@ use NovaFrame\Http\Request;
 use NovaFrame\Http\Response;
 use NovaFrame\Route\RouteCollection;
 use NovaFrame\Route\RouteDispatcher;
+use NovaFrame\Route\RouteLoader;
 use Symfony\Component\Console\Input\ArgvInput;
 
 class Kernel extends Container
@@ -114,7 +115,7 @@ class Kernel extends Container
             ))->run($arg);
         }
 
-        require DIR_APP . 'Routes' . DS . 'app.php';
+        RouteLoader::load($this->make('routes'));
 
         $respond = (new RouteDispatcher(
             $this, $this->make('routes')
