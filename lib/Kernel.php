@@ -148,8 +148,6 @@ class Kernel extends Container
 
         $response->clean(); // make sure restore any values to original
 
-        ob_clean();
-
         return $respond;
     }
 }
