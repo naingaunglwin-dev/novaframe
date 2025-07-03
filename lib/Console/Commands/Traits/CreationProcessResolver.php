@@ -15,10 +15,10 @@ trait CreationProcessResolver
         $file = $this->input->getArgument($arg);
 
         if (empty($file)) {
-            $file = $this->ask("Please enter $command name");
+            $file = $this->io->ask("Please enter $command name");
 
             if (empty($file)) {
-                $this->box('Error', 'white', 'red', ['bold'], newline: true);
+                $this->io->box('Error', 'white', 'red', ['bold'], newline: true);
                 $this->io->error(' You must provide a valid name.', emoji: ' 🞩');
 
                 return self::FAILURE;
@@ -33,7 +33,7 @@ trait CreationProcessResolver
             $table = $this->input->getArgument('table');
 
             if (empty($table)) {
-                $table = $this->ask("Please enter table name");
+                $table = $this->io->ask("Please enter table name");
 
                 if (empty($table)) {
                     $table = ucfirst(
@@ -61,7 +61,7 @@ trait CreationProcessResolver
             $this->io->warning(" $classname is already exists.", true, ' ⚠');
             $this->io->newLine();
 
-            if (!$this->confirm('All content will be overwritten, Do you want to continue?', false)) {
+            if (!$this->io->confirm('All content will be overwritten, Do you want to continue?', false)) {
                 return self::FAILURE;
             }
         }
@@ -109,7 +109,7 @@ trait CreationProcessResolver
 
                 return self::SUCCESS;
             } else {
-                $this->box('Error', 'white', 'red', ['bold']);
+                $this->io->box('Error', 'white', 'red', ['bold']);
                 $this->io->error(' Failed to create ' . $command, emoji: ' 🞩');
                 $this->io->newLine();
 
@@ -154,8 +154,8 @@ trait CreationProcessResolver
         $file = Path::join(DIR_NOVA, 'Console', 'Commands', 'stubs', "$command.php");
 
         if (!file_exists($file)) {
-            $this->box('Error', 'white', 'red', ['bold']);
-            $this->error('Stub file not found.');
+            $this->io->box('Error', 'white', 'red', ['bold']);
+            $this->io->error('Stub file not found.');
             return self::FAILURE;
         }
 
