@@ -2,6 +2,7 @@
 
 namespace NovaFrame\Route;
 
+use NovaFrame\Encryption\Encryption;
 use NovaFrame\Facade\Event;
 use NovaFrame\Http\RedirectResponse;
 use NovaFrame\Http\Request;
@@ -156,8 +157,7 @@ class RouteDispatcher
     private function handle(array $matched, Response $response)
     {
         $action = $matched['action'];
-        $detectedAction = $this->detectAction(gettype($action));
-
+        $detectedAction = $this->detectAction($action);
 
         switch ($detectedAction) {
             case 'view':
@@ -204,6 +204,11 @@ class RouteDispatcher
                 return $this->kernel->get($controller, $method, $matched['tokens']);
 
             case 'callback':
+                if (str_contains($action, 'serialized:')) {
+                    $decrypt = Encryption::decrypt(str_replace('serialized:', '', $action));
+                    $action  = \Opis\Closure\unserialize($decrypt);
+                }
+
                 return $this->kernel->get($action, $matched['tokens']);
         }
 
@@ -238,14 +243,18 @@ class RouteDispatcher
     /**
      * Detects the type of action for a route based on the action variable.
      *
-     * @param mixed $action The route action, can be string, array, callable
+     * @param mixed $action The route action
      *
      * @return string One of 'view', 'controller', or 'callback'
      */
-    private function detectAction($action): string
+    private function detectAction(mixed $action): string
     {
-        switch ($action) {
+        switch (gettype($action)) {
             case "string":
+                if (str_contains($action, 'serialized:')) {
+                    return 'callback';
+                }
+
                 if (preg_match('/^([a-zA-Z_][a-zA-Z0-9_]*)@([a-zA-Z_][a-zA-Z0-9_]*)$/', $action)) {
                     return 'controller';
                 }
