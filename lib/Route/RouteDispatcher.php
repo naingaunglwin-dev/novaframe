@@ -204,7 +204,7 @@ class RouteDispatcher
                 return $this->kernel->get($controller, $method, $matched['tokens']);
 
             case 'callback':
-                if (str_contains($action, 'serialized:')) {
+                if (is_string($action) && str_contains($action, 'serialized:')) {
                     $decrypt = Encryption::decrypt(str_replace('serialized:', '', $action));
                     $action  = \Opis\Closure\unserialize($decrypt);
                 }
