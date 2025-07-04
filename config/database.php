@@ -10,7 +10,7 @@ return [
     | to use as your default connection for all database work.
     |
     */
-    'default' => 'mysql',
+    'default' => env('DB_DRIVER', 'mysql'),
 
     /*
     |--------------------------------------------------------------------------
@@ -24,27 +24,27 @@ return [
     'connections' => [
         'mysql' => [
             'driver' => 'mysql',
-            'host' => 'localhost',
-            'port' => 3306,
-            'database' => 'novaframe',
-            'username' => 'root',
-            'password' => '',
-            'charset' => 'utf8mb4',
-            'engine' => 'innoDB'
+            'host' => env('DB_HOST', 'localhost'),
+            'port' => env('DB_PORT', 3306),
+            'database' => env('DB_NAME', 'novaframe'),
+            'username' => env('DB_USER', 'root'),
+            'password' => env('DB_PASS'),
+            'charset' => env('DB_CHARSET', 'utf8mb4'),
+            'engine' => env('DB_ENGINE', 'InnoDB'),
         ],
 
         'pgsql' => [
             'driver' => 'pgsql',
-            'host' => 'localhost',
-            'port' => 5432,
-            'database' => 'novaframe',
-            'username' => 'postgres',
-            'password' => '',
+            'host' => env('DB_HOST', 'localhost'),
+            'port' => env('DB_PORT', 5432),
+            'database' => env('DB_NAME', 'novaframe'),
+            'username' => env('DB_USER', 'root'),
+            'password' => env('DB_PASS'),
         ],
 
         'sqlite' => [
             'driver' => 'sqlite',
-            'database' => \NovaFrame\Helpers\Path\Path::join(DIR_APP, 'Database', 'database.sqlite'),
+            'database' => env('DB_NAME', \NovaFrame\Helpers\Path\Path::join(DIR_APP, 'Database', 'database.sqlite')),
         ],
     ],
 ];
