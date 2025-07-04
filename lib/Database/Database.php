@@ -48,7 +48,7 @@ class Database
         $connection = $config['connections'][$driver];
 
         $this->connection = new Connection(
-            $this->buildDns($connection),
+            $this->buildDsn($connection),
             $connection['username'],
             $connection['password'],
         );
@@ -65,7 +65,7 @@ class Database
      * @param array $config
      * @return string
      */
-    private function buildDns(array $config): string
+    private function buildDsn(array $config): string
     {
         $driver = $config['driver'] ?? 'mysql';
         $host = $config['host'] ?? 'localhost';
