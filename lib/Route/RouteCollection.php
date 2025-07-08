@@ -53,6 +53,10 @@ class RouteCollection
                 throw new RouteNotFound($route, $method);
             }
 
+            if (is_string($middlewares)) {
+                $middlewares = [$middlewares];
+            }
+
             $this->routes['list'][$method][$route]['middleware'] = $middlewares;
         }
     }
@@ -98,7 +102,7 @@ class RouteCollection
      */
     public function getRouteList(): array
     {
-        return $this->routes['list'];
+        return $this->routes['list'] ?? [];
     }
 
     /**
