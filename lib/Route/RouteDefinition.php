@@ -2,127 +2,124 @@
 
 namespace NovaFrame\Route;
 
-/**
- * Interface RouteDefinition
- *
- * Defines the contract for a route registration system,
- * including HTTP methods, route grouping, middleware assignment,
- * naming, and fallback handling.
- */
-interface RouteDefinition
+use NovaFrame\Middleware\Middleware;
+
+
+class RouteDefinition
 {
     /**
-     * Create a route with specified HTTP method(s) and action.
+     * Routes added during group context, grouped by HTTP method.
      *
-     * @param string $from The URI pattern of the route.
-     * @param string|array|callable $to The action to be executed.
-     * @param string|array $method HTTP method(s) allowed for this route.
-     * @return mixed
+     * @var array<string, array<string, mixed>>
      */
-    public function create(string $from, string|array|callable $to, string|array $method);
+    private array $groupRoutes;
 
     /**
-     * Register a route that responds to GET requests.
+     * Stores the keys (method and request path) for a single route.
      *
-     * @param string $from The URI pattern.
-     * @param string|array|callable $to The route action.
-     * @return mixed
+     * @var array{request: string, methods: string[]}|array
      */
-    public function get(string $from, string|array|callable $to);
+    private array $routeKeys = [];
 
     /**
-     * Register a route that responds to POST requests.
+     * RouteDefinition constructor.
      *
-     * @param string $from The URI pattern.
-     * @param string|array|callable $to The route action.
-     * @return mixed
+     * @param Route $router The main Route instance used for defining routes.
+     * @param RouteCollection $collection The route collection where routes are stored.
+     * @param string|null $request The request path (used for single routes).
+     * @param string[]|null $methods The HTTP methods (used for single routes).
+     * @param array $routesBeforeGroup Route list before the group was executed.
+     * @param string $groupPrefix The prefix for the group (e.g., "admin", "api/v1").
      */
-    public function post(string $from, string|array|callable $to);
+    public function __construct(
+        private Route $router,
+        private RouteCollection $collection,
+        private ?string $request = null,
+        private ?array $methods = null,
+        array $routesBeforeGroup = [],
+        private readonly string $groupPrefix = ''
+    )
+    {
+        $this->groupRoutes = $this->detectNewRoutes(
+            $routesBeforeGroup,
+            $this->collection->getRouteList()
+        );
+
+        if ($this->request !== null && $this->methods !== null) {
+            $this->routeKeys = ['request' => $this->request, 'methods' => $this->methods];
+        }
+    }
 
     /**
-     * Register a route that responds to HEAD requests.
+     * Applies middleware to the current route or all routes defined in the group.
      *
-     * @param string $from The URI pattern.
-     * @param string|array|callable $to The route action.
-     * @return mixed
+     * @param string|array<string>|Middleware $middleware
+     * @return $this
      */
-    public function head(string $from, string|array|callable $to);
+    public function middleware(string|array|Middleware $middleware): RouteDefinition
+    {
+        if (!empty($this->groupRoutes)) {
+            foreach ($this->groupRoutes as $method => $routes) {
+                foreach ($routes as $route => $_) {
+                    $this->collection->addMiddleware([$method], $route, $middleware);
+                }
+            }
+        } elseif (!empty($this->routeKeys)) {
+            $this->collection->addMiddleware($this->routeKeys['methods'], $this->routeKeys['request'], $middleware);
+        }
+
+        return $this;
+    }
 
     /**
-     * Register a route that responds to PUT requests.
+     * Assigns a name to the current route for use in route generation.
      *
-     * @param string $from The URI pattern.
-     * @param string|array|callable $to The route action.
-     * @return mixed
+     * @param string $name The name of the route.
+     * @return $this
      */
-    public function put(string $from, string|array|callable $to);
+    public function name(string $name): RouteDefinition
+    {
+        if (!empty($this->routeKeys)) {
+            $this->collection->addRouteName($this->routeKeys['methods'], $this->routeKeys['request'], $name);
+        }
+
+        return $this;
+    }
 
     /**
-     * Register a route that responds to PATCH requests.
+     * Defines a nested route group within the current group context.
      *
-     * @param string $from The URI pattern.
-     * @param string|array|callable $to The route action.
-     * @return mixed
+     * @param callable $routes The route definitions within the subgroup.
+     * @return RouteDefinition A new scoped instance for the nested group.
      */
-    public function patch(string $from, string|array|callable $to);
+    public function group(callable $routes): RouteDefinition
+    {
+        $before = $this->collection->getRouteList();
+
+        $this->router->withGroupContext($this->groupPrefix, $routes);
+
+        return new self($this->router, $this->collection, routesBeforeGroup: $before, groupPrefix: $this->groupPrefix);
+    }
 
     /**
-     * Register a route that responds to DELETE requests.
+     * Compares two route lists and returns only the newly added routes.
      *
-     * @param string $from The URI pattern.
-     * @param string|array|callable $to The route action.
-     * @return mixed
+     * @param array<string, array<string, mixed>> $before Routes before group.
+     * @param array<string, array<string, mixed>> $after Routes after group.
+     * @return array<string, array<string, mixed>> Newly added routes.
      */
-    public function delete(string $from, string|array|callable $to);
+    private function detectNewRoutes(array $before, array $after): array
+    {
+        $diff = [];
 
-    /**
-     * Register a route that responds to OPTIONS requests.
-     *
-     * @param string $from The URI pattern.
-     * @param string|array|callable $to The route action.
-     * @return mixed
-     */
-    public function options(string $from, string|array|callable $to);
+        foreach ($after as $method => $routes) {
+            foreach ($routes as $route => $handler) {
+                if (!isset($before[$method][$route])) {
+                    $diff[$method][$route] = $handler;
+                }
+            }
+        }
 
-    /**
-     * Register a route that responds to any HTTP method.
-     *
-     * @param string $from The URI pattern.
-     * @param string|array|callable $to The route action.
-     * @return mixed
-     */
-    public function any(string $from, string|array|callable $to);
-
-    /**
-     * Define a group of routes sharing a common URI prefix.
-     *
-     * @param string $prefix The URI prefix.
-     * @param callable $routes A callback defining routes under this prefix.
-     * @return mixed
-     */
-    public function prefix(string $prefix, callable $routes);
-
-    /**
-     * Assign middleware(s) to the current route or group.
-     *
-     * @param string|array $middleware Middleware class name(s) or identifiers.
-     * @return mixed
-     */
-    public function middleware(string|array $middleware);
-
-    /**
-     * Assign a name to the current route.
-     *
-     * @param string $name The route name.
-     * @return mixed
-     */
-    public function name(string $name);
-
-    /**
-     * Define a fallback action when no route matches.
-     *
-     * @param callable $action The fallback callable.
-     * @return mixed
-     */
-    public function fallback(callable $action);
+        return $diff;
+    }
 }

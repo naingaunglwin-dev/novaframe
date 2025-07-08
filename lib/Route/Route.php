@@ -5,7 +5,7 @@ namespace NovaFrame\Route;
 use NovaFrame\Kernel;
 use NovaFrame\Route\Exceptions\UnsupportedHttpMethod;
 
-class Route implements RouteDefinition
+class Route implements RouteDefinitionInterface
 {
     /**
      * The collection where routes are stored.
@@ -50,6 +50,15 @@ class Route implements RouteDefinition
     ];
 
     /**
+     * Route middlewares
+     *
+     * @var array
+     */
+    private array $middleware = [];
+
+    private string $routeName = '';
+
+    /**
      * Route constructor.
      *
      * Initializes route collection from the application kernel.
@@ -62,7 +71,7 @@ class Route implements RouteDefinition
     /**
      * @inheritDoc
      */
-    public function create(string $from, callable|array|string $to, array|string $method): Route
+    public function create(string $from, callable|array|string $to, array|string $method): RouteDefinition
     {
         $method = $this->validateHttpMethod($method); // validate http method and cast var type into array & convert to uppercase
 
@@ -74,11 +83,17 @@ class Route implements RouteDefinition
             'request' => $request,
             'action'  => $to,
             'method'  => $method,
-            'name'    => null,
-            'middleware' => [],
+            'name'    => $this->routeName,
+            'middleware' => $this->middleware,
         ]);
 
-        return $this;
+        if (!$this->isGroupRoute) {
+            $this->middleware = []; // Reset middleware if not in a group, to avoid leaking to the next route
+        }
+
+        $this->routeName = ''; // Reset route name after registration, so it doesn't carry over
+
+        return new RouteDefinition($this, $this->collection, $request, $method);
     }
 
     /**
@@ -94,7 +109,7 @@ class Route implements RouteDefinition
     /**
      * @inheritDoc
      */
-    public function get(string $from, callable|array|string $to): Route
+    public function get(string $from, callable|array|string $to): RouteDefinition
     {
         return $this->create($from, $to, 'get');
     }
@@ -102,7 +117,7 @@ class Route implements RouteDefinition
     /**
      * @inheritDoc
      */
-    public function post(string $from, callable|array|string $to): Route
+    public function post(string $from, callable|array|string $to): RouteDefinition
     {
         return $this->create($from, $to, 'post');
     }
@@ -110,7 +125,7 @@ class Route implements RouteDefinition
     /**
      * @inheritDoc
      */
-    public function head(string $from, callable|array|string $to): Route
+    public function head(string $from, callable|array|string $to): RouteDefinition
     {
         return $this->create($from, $to, 'head');
     }
@@ -118,7 +133,7 @@ class Route implements RouteDefinition
     /**
      * @inheritDoc
      */
-    public function put(string $from, callable|array|string $to): Route
+    public function put(string $from, callable|array|string $to): RouteDefinition
     {
         return $this->create($from, $to, 'put');
     }
@@ -126,7 +141,7 @@ class Route implements RouteDefinition
     /**
      * @inheritDoc
      */
-    public function patch(string $from, callable|array|string $to): Route
+    public function patch(string $from, callable|array|string $to): RouteDefinition
     {
         return $this->create($from, $to, 'patch');
     }
@@ -134,7 +149,7 @@ class Route implements RouteDefinition
     /**
      * @inheritDoc
      */
-    public function delete(string $from, callable|array|string $to): Route
+    public function delete(string $from, callable|array|string $to): RouteDefinition
     {
         return $this->create($from, $to, 'delete');
     }
@@ -142,7 +157,7 @@ class Route implements RouteDefinition
     /**
      * @inheritDoc
      */
-    public function options(string $from, callable|array|string $to): Route
+    public function options(string $from, callable|array|string $to): RouteDefinition
     {
         return $this->create($from, $to, 'options');
     }
@@ -150,7 +165,7 @@ class Route implements RouteDefinition
     /**
      * @inheritDoc
      */
-    public function any(string $from, callable|array|string $to): Route
+    public function any(string $from, callable|array|string $to): RouteDefinition
     {
         return $this->create($from, $to, 'any');
     }
@@ -158,21 +173,55 @@ class Route implements RouteDefinition
     /**
      * @inheritDoc
      */
-    public function prefix(string $prefix, callable $routes)
+    public function prefix(string $prefix): RouteDefinition
+    {
+        $routesBeforeGroup = $this->collection->getRouteList();
+
+        return new RouteDefinition($this, $this->collection, routesBeforeGroup: $routesBeforeGroup, groupPrefix: $prefix);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function group(callable $routes): RouteDefinition
+    {
+        $routesBeforeGroup = $this->collection->getRouteList();
+        return (new RouteDefinition($this, $this->collection, routesBeforeGroup: $routesBeforeGroup))->group($routes);
+    }
+
+    /**
+     * Executes a group of routes within a temporary context that applies a prefix and sets the group route flag.
+     *
+     * This method is typically used internally by the group/prefix features to apply a common URL prefix
+     * and shared state (like middleware) to a set of routes defined in the callback.
+     * After execution, the previous routing context is restored.
+     *
+     * @param string   $prefix   The URL prefix to apply to all routes within the group.
+     * @param callable $callback A callback that registers the routes within this group context.
+     *
+     * @return void
+     */
+    public function withGroupContext(string $prefix, callable $callback): void
     {
         $oldPrefix = $this->prefix;
-        $oldRouteGroupStatus = $this->isGroupRoute;
-
         $this->resolvePrefix($prefix);
         $this->isGroupRoute = true;
 
-        call_user_func($routes);
+        $callback($this);
 
-        // restore to normal state
-        $this->prefix = $oldPrefix;
-        $this->isGroupRoute = $oldRouteGroupStatus;
+        $this->restore($oldPrefix);
+    }
 
-        return $this;
+    /**
+     * @param string $prefix
+     *
+     * @return void
+     */
+    private function restore(string $prefix): void
+    {
+        $this->prefix = $prefix;
+        $this->isGroupRoute = false;
+        $this->middleware = [];
     }
 
     /**
@@ -180,7 +229,8 @@ class Route implements RouteDefinition
      */
     public function middleware(array|string $middleware): Route
     {
-        $this->collection->addMiddleware($this->currentRoute['method'], $this->currentRoute['request'], $middleware);
+        $this->middleware = array_merge($this->middleware, is_string($middleware) ? [$middleware] : $middleware);
+        $this->middleware = array_unique($this->middleware);
 
         return $this;
     }
@@ -190,7 +240,7 @@ class Route implements RouteDefinition
      */
     public function name(string $name): Route
     {
-        $this->collection->addRouteName($this->currentRoute['method'], $this->currentRoute['request'], $name);
+        $this->routeName = $name;
 
         return $this;
     }
@@ -223,7 +273,7 @@ class Route implements RouteDefinition
         return str_replace(['\\', '//', '\\\\'], '/', $url);
     }
 
-    private function resolvePrefix(string $prefix): void
+    protected function resolvePrefix(string $prefix): void
     {
         if (!empty($prefix)) {
             $this->prefix = rtrim($this->prefix, '/');
@@ -233,10 +283,6 @@ class Route implements RouteDefinition
 
     private function prependPrefix(string $request): string
     {
-        if (!$this->isGroupRoute) {
-            return $request;
-        }
-
         return $this->prefix . '/' . ltrim($request, '/');
     }
 
@@ -249,7 +295,11 @@ class Route implements RouteDefinition
         ];
     }
 
-    private function validateHttpMethod($method)
+    /**
+     * @param string|array $method
+     * @return string[]
+     */
+    private function validateHttpMethod(string|array $method): array
     {
         if ($method === 'any') {
             return $this->httpMethods;
