@@ -39,7 +39,7 @@ class Validator
     /**
      * Accumulated validation errors
      *
-     * @var array<string, string>
+     * @var array
      */
     private array $error = [];
 
@@ -125,10 +125,12 @@ class Validator
                         }
 
                         $params['label'] = $this->labels[$field] ?? $field;
+                        $params['request'] = $this->request->all();
 
-                        $result[$k] = app()->get($classname, $k, ['field' => $field, 'value' => $input, 'params' => $params]);
+                        $class = app()->get($classname);
+                        $result[$k] = app()->get($class, $k, ['field' => $field, 'value' => $input, 'params' => $params]);
 
-                        $this->setErrors($classname->getErrors());
+                        $this->setErrors($class->getErrors());
                     }
                 }
             }
@@ -136,6 +138,7 @@ class Validator
 
         if (in_array(false, array_values($result), true)) {
             Session::flash('old', $this->request->post());
+            Session::flash('errors', $this->getErrorMessages());
             redirect(request()->path())->send();
             return false;
         }
@@ -157,11 +160,52 @@ class Validator
     /**
      * Get all validation errors.
      *
-     * @return array<string, string>
+     * Example:
+     *
+     *```
+     * [
+     *     'label' => [
+     *         'rule1' => 'message1',
+     *         'rule2' => 'message2'
+     *     ]
+     * ]
+     *```
+     *
+     * @return array<string, array<string, string>>  Key = label, Value = array of rule => message
      */
     public function getErrors(): array
     {
         return $this->error;
+    }
+
+    /**
+     * Get all validation error messages as a flat list.
+     *
+     * Example:
+     * ```
+     * [
+     *     'message1',
+     *     'message2'
+     * ]
+     * ```
+     *
+     * @return string[] List of all error messages
+     */
+    public function getErrorMessages(): array
+    {
+        $messages = [];
+
+        if (empty($this->error)) {
+            return $messages;
+        }
+
+        foreach ($this->error as $label => $errors) {
+            foreach ($errors as $message) {
+                $messages[] = $message;
+            }
+        }
+
+        return $messages;
     }
 
     /**
