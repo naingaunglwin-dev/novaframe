@@ -6,6 +6,7 @@ use NovaFrame\Facade\Config;
 use NovaFrame\Facade\Env;
 use NovaFrame\Helpers\Path\Path;
 use NovaFrame\Http\Exceptions\HttpException;
+use NovaFrame\Http\Exceptions\ValidationException;
 use NovaFrame\Http\Response;
 use NovaFrame\RuntimeEnv;
 use Symfony\Component\Console\Output\ConsoleOutput;
@@ -43,6 +44,11 @@ class ExceptionHandler
 
     public function handle(\Throwable $e)
     {
+        if ($e instanceof ValidationException) {
+            $e->redirect()->send();
+            return true;
+        }
+
         $severity = E_ERROR;
 
         if (method_exists($e, 'getSeverity')) {

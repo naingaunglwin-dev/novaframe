@@ -128,7 +128,7 @@ class Validator
                         $params['request'] = $this->request->all();
 
                         $class = app()->get($classname);
-                        $result[$k] = app()->get($class, $k, ['field' => $field, 'value' => $input, 'params' => $params]);
+                        $result[$field][$k] = app()->get($class, $k, ['field' => $field, 'value' => $input, 'params' => $params]);
 
                         $this->setErrors($class->getErrors());
                     }
@@ -136,10 +136,9 @@ class Validator
             }
         }
 
-        if (in_array(false, array_values($result), true)) {
-            Session::flash('old', $this->request->post());
-            Session::flash('errors', $this->getErrorMessages());
-            redirect(request()->path())->send();
+        $fail = array_filter($result, fn($value) => in_array(false, $value, true));
+
+        if (!empty($fail)) {
             return false;
         }
 

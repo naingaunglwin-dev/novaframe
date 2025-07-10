@@ -10,6 +10,8 @@ use NovaFrame\Validation\Validator;
 
 class Request
 {
+    use \NovaFrame\Http\Validator;
+
     /**
      * Raw and sanitized request input arrays (get, post, cookie, files)
      *
@@ -297,20 +299,6 @@ class Request
         }
 
         return $this->validator;
-    }
-
-    /**
-     * Validates request input with given rules.
-     */
-    public function validate(array $rules, array $labels = []): bool
-    {
-        $validator = $this->validator();
-
-        if (!empty($labels)) {
-            $validator->setLabels($labels);
-        }
-
-        return $validator->validate($rules);
     }
 
     /**
