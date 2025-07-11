@@ -49,7 +49,7 @@ class Language
      * @param string $key     Dot-notated key (e.g., 'auth.failed').
      * @param array<string, string> $params Optional parameters to replace in the message.
      *
-     * @return string|null
+     * @return string
      *
      * @throws PathNotFound
      */
@@ -89,9 +89,11 @@ class Language
      * @param string $file
      * @param array<int, string> $keys
      * @param array<string, string> $params
-     * @return string|null
+     * @return string
+     *
+     * @throws \InvalidArgumentException
      */
-    private function find(string $file, array $keys, array $params = []): ?string
+    private function find(string $file, array $keys, array $params = []): string
     {
         $message = $this->messages[$this->locale][$file];
 
@@ -105,7 +107,7 @@ class Language
         }
 
         if (empty($message)) {
-            return null;
+            throw new \InvalidArgumentException('Unable to find key "' . implode('.', $keys) . '" in ' . $this->locale . '/' . $file);
         }
 
         if (!empty($params)) {
