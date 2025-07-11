@@ -15,9 +15,7 @@ class RedirectResponse extends Response
      */
     public function __construct(string $url = '', int $status = 302, array $headers = [])
     {
-        if (!empty($url)) {
-            $headers = array_merge($headers, ['Location' => $this->resolveRedirectUrl($url)]);
-        }
+        $headers = array_merge($headers, ['Location' => $this->resolveRedirectUrl($url)]);
 
         parent::__construct('', $status, $headers);
     }

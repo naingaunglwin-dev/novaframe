@@ -367,7 +367,7 @@ class Response
      * @param string $url
      * @return RedirectResponse
      */
-    public function redirect(string $url): RedirectResponse
+    public function redirect(string $url = ''): RedirectResponse
     {
         return new RedirectResponse($url, $this->statusCode, $this->headers);
     }
@@ -392,7 +392,7 @@ class Response
      */
     public function back(): RedirectResponse
     {
-        return new RedirectResponse(Session::get('previous_url', Session::get('current_url')), $this->statusCode, $this->headers);
+        return $this->redirect(Session::get('previous_url', Session::get('current_url')));
     }
 
     /**
