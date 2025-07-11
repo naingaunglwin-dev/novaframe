@@ -18,7 +18,7 @@ class CsrfToken extends Middleware
 
         if (
             in_array($method, ['post', 'put', 'patch', 'delete'])
-            && !Session::validateCsrfToken($token)
+            && !Session::validateCsrfToken($token ?? '')
         ) {
             Event::defer('csrfValidation', ['response' => $response, 'pass' => false]);
 
