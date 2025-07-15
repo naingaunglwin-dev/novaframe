@@ -10,7 +10,7 @@ class RequestSanitizer
 
         return match ($source) {
             'GET', 'POST', 'COOKIE' => static::recursiveSanitize($data),
-            'FILES' => $data,
+            'FILES' => static::formatFile($data),
             default => [],
         };
     }
@@ -34,5 +34,32 @@ class RequestSanitizer
         }
 
         return filter_var($data, FILTER_SANITIZE_SPECIAL_CHARS);
+    }
+
+    private static function formatFile(array $files)
+    {
+        $formatted = [];
+
+        if (empty($files)) {
+            return $formatted;
+        }
+
+        foreach ($files as $input => $file) {
+            if (is_array($file['name'])) {
+                foreach ($file['name'] as $index => $_) {
+                    $formatted[$input][] = new File([
+                        'name'     => $file['name'][$index],
+                        'type'     => $file['type'][$index],
+                        'size'     => $file['size'][$index],
+                        'tmp_name' => $file['tmp_name'][$index],
+                        'error'    => $file['error'][$index],
+                    ]);
+                }
+            } else {
+                $formatted[$input] = new File($file);
+            }
+        }
+
+        return $formatted;
     }
 }

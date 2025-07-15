@@ -302,24 +302,6 @@ class Request
     }
 
     /**
-     * Uploads a file with the given input name.
-     */
-    public function upload(string $name): bool
-    {
-        if (!isset($this->storage)) {
-            $this->storage = new Storage(DIR_STORAGE . 'public' . DS . 'upload');
-        }
-
-        $file = $this->file($name);
-
-        if (empty($file)) {
-            return false;
-        }
-
-        return $this->storage->saveUploadedFile($file);
-    }
-
-    /**
      * Gets the request method (e.g. GET, POST).
      */
     public function method(bool $lowercase = false): string

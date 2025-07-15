@@ -3,7 +3,7 @@
 namespace NovaFrame\Storage;
 
 use NovaFrame\Helpers\FileSystem\FileSystem;
-use NovaFrame\Http\Request;
+use NovaFrame\Http\File;
 
 class Storage
 {
@@ -52,41 +52,30 @@ class Storage
     }
 
     /**
-     * Save an uploaded file from $_FILES array or from a Request object.
+     * Saves an uploaded file to the specified destination.
      *
-     * @param array|string $name If array, assumes full $_FILES structure. If string, a Request object is required.
-     * @param Request|null $request Optional request object to retrieve file from.
-     * @param string|null $destination Optional target directory (defaults to configured destination).
+     * Handles a single file upload. It accepts either a `File` object directly,
+     * or an input name (string) along with a `Request` object to retrieve the file.
+     * The destination directory is created if it doesn't already exist.
      *
-     * @return bool True on success, false on failure.
+     * @param File $file        A `File` object.
+     * @param string|null $destination Optional target directory; defaults to the configured storage path.
      *
-     * @throws \BadMethodCallException If a string is passed as $name without a Request object.
+     * @return string|false Returns the saved file path as a string on success, or false on failure.
      */
-    public function saveUploadedFile(array|string $name, ?Request $request = null, ?string $destination = null)
+    public function saveUploadedFile(File $file, ?string $destination = null): bool|string
     {
         $destination ??= $this->destination;
 
         FileSystem::mkdir($destination, 0777, true);
 
-        if (is_string($name) && empty($request)) {
-            throw new \BadMethodCallException('Request object need to pass if first parameter is a string');
-        }
+        if (!$file->hasError()) {
+            $filename = basename($file->getName());
+            $target = rtrim($destination, DS) . DS . $filename;
 
-        if (is_array($name)) {
-            $uploaded = $name;
-        } else {
-            $uploaded = $request->file($name);
-        }
-
-        if (isset($uploaded['error']) && $uploaded['error'] !== UPLOAD_ERR_OK) {
-            return false;
-        }
-
-        $name = basename($uploaded['name']);
-        $target = rtrim($destination, DS) . DS . $name;
-
-        if (move_uploaded_file($uploaded['tmp_name'], $target)) {
-            return true;
+            if (move_uploaded_file($file->getTmpName(), $target)) {
+                return $target;
+            }
         }
 
         return false;
