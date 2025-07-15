@@ -212,8 +212,19 @@ class Session
     public function restart(): void
     {
         $this->driver->start();
-        $this->driver->regenerateId(true);
+        $this->regenerateId(true);
         $this->clean();
+    }
+
+    /**
+     * Regenerate session id
+     *
+     * @param bool $deleteOldSession
+     * @return void
+     */
+    public function regenerateId(bool $deleteOldSession = false): void
+    {
+        $this->driver->regenerateId($deleteOldSession);
     }
 
     /**
@@ -290,6 +301,16 @@ class Session
     }
 
     /**
+     * Get session name
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
      * Generate or return a CSRF token.
      *
      * @return string
@@ -323,6 +344,16 @@ class Session
         $this->ensureStarted();
 
         return hash_equals($this->getCsrfToken(), $token);
+    }
+
+    /**
+     * Destroy current session
+     *
+     * @return bool
+     */
+    public function destroy(): bool
+    {
+        return $this->driver->destroy($this->id());
     }
 
     /**
