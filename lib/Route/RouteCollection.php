@@ -79,7 +79,7 @@ class RouteCollection
             }
 
             $this->routes['list'][$method][$route]['name'] = $name;
-            $this->routeNames[$name] = $route;
+            $this->routeNames[$name] = $this->splitRoutesIntoSegments($route);
         }
     }
 
@@ -110,9 +110,9 @@ class RouteCollection
      *
      * @param string $name The route name.
      *
-     * @return string The route URI.
+     * @return array The route URI segments.
      */
-    public function getRouteByName(string $name): string
+    public function getRouteByName(string $name): array
     {
         return $this->routeNames[$name];
     }
@@ -140,5 +140,28 @@ class RouteCollection
             'routes' => $this->routes,
             'names' => $this->routeNames
         ];
+    }
+
+    /**
+     * split route url into segments
+     *
+     * @param string $route
+     * @return string[]
+     */
+    private function splitRoutesIntoSegments(string $route): array
+    {
+        $split = explode('/', $route);
+
+        if (empty($split)) {
+            return ['/' => '/']; // assume route is base route
+        }
+
+        $segments = [];
+
+        foreach ($split as $segment) {
+            $segments[] = $segment;
+        }
+
+        return $segments;
     }
 }
