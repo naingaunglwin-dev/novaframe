@@ -2,6 +2,8 @@
 
 namespace NovaFrame\Helpers\FileSystem;
 
+use NovaFrame\Helpers\Path\Path;
+
 class FileSystem
 {
     /**
@@ -14,6 +16,8 @@ class FileSystem
      */
     public static function mkdir(string $path, int $mode = 0777, bool $recursive = false): bool
     {
+        $path = Path::normalize($path);
+
         if (is_dir($path)) {
             return false;
         }
@@ -29,6 +33,8 @@ class FileSystem
      */
     public static function rmdir(string $dir): bool
     {
+        $dir = Path::normalize($dir);
+
         if (!is_dir($dir)) {
             return false;
         }
@@ -58,6 +64,8 @@ class FileSystem
      */
     public static function fwrite(string $file, string $content, bool $override = false, bool $throw = false): bool
     {
+        $file = Path::normalize($file);
+
         $dir = dirname($file);
 
         if (!is_dir($dir)) {
@@ -104,6 +112,8 @@ class FileSystem
      */
     public static function fread(string $file, ?int $length = null, bool $throw = false): string|false
     {
+        $file = Path::normalize($file);
+
         if (!is_file($file) || !is_readable($file)) {
             if ($throw) {
                 throw new \RuntimeException('Unable to open file or read: ' . $file);
@@ -149,6 +159,8 @@ class FileSystem
      */
     public static function unlink(string $file): bool
     {
+        $file = Path::normalize($file);
+
         if (!file_exists($file) && !is_link($file)) {
             return false;
         }
@@ -166,6 +178,9 @@ class FileSystem
      */
     public static function copy(string $from, string $to, bool $override = false): bool
     {
+        $from = Path::normalize($from);
+        $to   = Path::normalize($to);
+
         if (!file_exists($from)) {
             return false;
         }
