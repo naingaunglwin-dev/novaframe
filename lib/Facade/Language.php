@@ -5,7 +5,7 @@ namespace NovaFrame\Facade;
 use NovaFrame\Facade\Facade;
 
 /**
- * @method static \NovaFrame\Language\Language get(string $key, array $params = [])
+ * @method static string get(string $key, array $params = [])
  */
 class Language extends Facade
 {

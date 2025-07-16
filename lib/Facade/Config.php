@@ -3,7 +3,7 @@
 namespace NovaFrame\Facade;
 
 /**
- * @method static \NovaFrame\Config\Config get(string $key, $default = null)
+ * @method static mixed get(string $key, $default = null)
  */
 class Config extends Facade
 {
