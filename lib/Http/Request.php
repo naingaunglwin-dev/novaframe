@@ -445,6 +445,18 @@ class Request
         return $this->request['sanitized']['files'][$key] ?? $default;
     }
 
+    /**
+     * Get a route parameter from the current request.
+     *
+     * @param string $name The parameter name to retrieve.
+     * @param mixed|null $default The default value if parameter is not set.
+     * @return mixed The route parameter value or default.
+     */
+    public function route(string $name, $default = null): mixed
+    {
+        return RouteParameter::get($name, $default);
+    }
+
     private function traverse(array $source, string $key, mixed $default = null): mixed
     {
         $keys = explode('.', $key);

@@ -7,6 +7,7 @@ use NovaFrame\Facade\Event;
 use NovaFrame\Http\RedirectResponse;
 use NovaFrame\Http\Request;
 use NovaFrame\Http\Response;
+use NovaFrame\Http\RouteParameter;
 use NovaFrame\Kernel;
 use NovaFrame\Middleware\Handler;
 use NovaFrame\View\Renderer;
@@ -321,6 +322,7 @@ class RouteDispatcher
             $tokens = array_filter($tokens, fn ($key) => is_string($key), ARRAY_FILTER_USE_KEY);
 
             $tokens['key'] = $key;
+            RouteParameter::set($tokens);
 
             return $tokens;
         }
