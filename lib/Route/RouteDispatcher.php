@@ -7,6 +7,7 @@ use NovaFrame\Facade\Event;
 use NovaFrame\Http\RedirectResponse;
 use NovaFrame\Http\Request;
 use NovaFrame\Http\Response;
+use NovaFrame\Http\RouteParameter;
 use NovaFrame\Kernel;
 use NovaFrame\Middleware\Handler;
 use NovaFrame\View\Renderer;
@@ -311,16 +312,17 @@ class RouteDispatcher
      */
     private function tokenize(string $route, string $url)
     {
+        if ($url === '/') {
+            return [$url];
+        }
+
         $pattern = preg_quote($route, '/');
 
         $pattern = '/^' . preg_replace('/\\\{(\w+)\\\}/', '(?P<${1}>[\w-]+)', $pattern) . '$/';
 
         if (preg_match($pattern, $url, $tokens)) {
-            $key = $tokens[0];
-
             $tokens = array_filter($tokens, fn ($key) => is_string($key), ARRAY_FILTER_USE_KEY);
-
-            $tokens['key'] = $key;
+            RouteParameter::set($tokens);
 
             return $tokens;
         }
