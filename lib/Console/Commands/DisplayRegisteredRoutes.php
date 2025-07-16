@@ -9,6 +9,7 @@ use Symfony\Component\Console\Helper\FormatterHelper;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableCell;
 use Symfony\Component\Console\Helper\TableStyle;
+use Symfony\Component\Console\Input\InputOption;
 
 class DisplayRegisteredRoutes extends Command
 {
@@ -64,7 +65,20 @@ class DisplayRegisteredRoutes extends Command
      *
      * @var array
      */
-    protected array $options = [];
+    protected array $options = [
+        [
+            'name' => 'method',
+            'short' => 'm',
+            'mode' => InputOption::VALUE_REQUIRED,
+            'description' => 'filter routes list with method'
+        ],
+        [
+            'name' => 'name',
+            'short' => 'r',
+            'mode' => InputOption::VALUE_REQUIRED,
+            'description' => 'filter routes list with route name'
+        ]
+    ];
 
     /**
      * Usage for command
@@ -72,7 +86,7 @@ class DisplayRegisteredRoutes extends Command
      *
      * @var string
      */
-    protected string $usage = 'route:list';
+    protected string $usage = 'route:list [-m|--method=METHOD] [-r|--name=NAME]';
 
     public function handle()
     {
@@ -82,13 +96,20 @@ class DisplayRegisteredRoutes extends Command
         $collection = app('routes');
 
         $this->table($collection->getRouteList());
+
+        return self::SUCCESS;
     }
 
     private function table($lists): void
     {
+        $filterMethod = $this->input->getOption('method') ?: 'any';
+        $filterMethod = strtoupper($filterMethod);
+
+        $filterName = $this->input->getOption('name');
+
         $table = new Table($this->output);
 
-        $table->setHeaders([' no ', ' method ', ' route ', ' param ', ' handler ', ' action ', ' name ']);
+        $table->setHeaders([' no ', ' method ', ' route ', ' param ', ' param count ', ' handler ', ' action ', ' name ']);
 
         $no = 1;
         $rows = [];
@@ -96,10 +117,18 @@ class DisplayRegisteredRoutes extends Command
         $formatter = new FormatterHelper();
 
         if (empty($lists)) {
-            $table->addRow([new TableCell('<comment>not found.</comment>', ['colspan' => 7])]);
+            $table->addRow([new TableCell('<comment>not found</comment>', ['colspan' => 8])]);
         } else {
             foreach ($lists as $method => $list) {
+                if ($filterMethod !== 'ANY' && $filterMethod !== $method) {
+                    continue;
+                }
                 foreach ($list as $route => $items) {
+
+                    if (!empty($filterName) && $filterName != $items['name']) {
+                        continue;
+                    }
+
                     $param = '';
 
                     if (str_contains($route, '{')) {
@@ -134,19 +163,27 @@ class DisplayRegisteredRoutes extends Command
                         $handlerValue = Path::join(DIR_APP, 'Views', $handlerValue);
                     }
 
+                    $paramCount = 0;
+
                     if (empty($param)) {
-                        $param = $formatter->formatBlock('none', 'comment');
+                        $param = $formatter->formatBlock('- none -', 'comment');
+                    } else {
+                        $paramCount = count(explode(',', $param));
                     }
 
-                    $name = $items['name'] ?? $formatter->formatBlock('none', 'comment');
+                    $name = $items['name'] ?: $formatter->formatBlock('- none -', 'comment');;
 
-                    $rows[] = [$no, $method, $route, $param, $handlerValue, $handlerType, $name];
+                    $rows[] = [$no, $method, $route, $param, $paramCount, $handlerValue, $handlerType, $name];
 
                     $no++;
                 }
             }
 
             $table->setRows($rows);
+        }
+
+        if (empty($rows)) {
+            $table->addRow([new TableCell('<comment>not found</comment>', ['colspan' => 8])]);
         }
 
         $tableStyle = new TableStyle();
