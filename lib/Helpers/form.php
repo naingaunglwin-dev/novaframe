@@ -146,3 +146,26 @@ if (!function_exists('input_csrf')) {
         return '<input type="hidden" name="csrf_token" value="' . csrf_token() . '">';
     }
 }
+
+if (!function_exists('has_error')) {
+    function has_error(string $field): bool
+    {
+        $errors = \NovaFrame\Facade\Session::getFlash('errors', []);
+
+        return !empty($errors) && array_key_exists($field, $errors);
+    }
+}
+
+if (!function_exists('errors')) {
+    function errors(): array
+    {
+        return \NovaFrame\Facade\Session::getFlash('errors', []);
+    }
+}
+
+if (!function_exists('error')) {
+    function error(string $field): string
+    {
+        return errors()[$field] ?? '';
+    }
+}
