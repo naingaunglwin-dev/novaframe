@@ -313,7 +313,7 @@ class RouteDispatcher
     private function tokenize(string $route, string $url)
     {
         if ($url === '/') {
-            return [$url];
+            return $url === $route ? [$url] : false;
         }
 
         $pattern = preg_quote($route, '/');
@@ -321,7 +321,9 @@ class RouteDispatcher
         $pattern = '/^' . preg_replace('/\\\{(\w+)\\\}/', '(?P<${1}>[\w-]+)', $pattern) . '$/';
 
         if (preg_match($pattern, $url, $tokens)) {
-            $tokens = array_filter($tokens, fn ($key) => is_string($key), ARRAY_FILTER_USE_KEY);
+
+            $tokens = array_filter($tokens, fn ($key) => !(count($tokens) > 1) || is_string($key), ARRAY_FILTER_USE_KEY);
+
             RouteParameter::set($tokens);
 
             return $tokens;
