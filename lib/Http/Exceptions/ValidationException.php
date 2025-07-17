@@ -2,6 +2,7 @@
 
 namespace NovaFrame\Http\Exceptions;
 
+use NovaFrame\Facade\Session;
 use NovaFrame\Http\RedirectResponse;
 use NovaFrame\Http\Response;
 use NovaFrame\Validation\Validator;
@@ -16,9 +17,13 @@ class ValidationException extends RuntimeException
 
     public function redirect(): RedirectResponse
     {
-        return response()
+        $response = response()
             ->back()
             ->with('errors', $this->validator->getErrorMessages());
+
+        Session::save();
+
+        return $response;
     }
 
     public function getErrorMessages(): array
@@ -46,7 +51,11 @@ class ValidationException extends RuntimeException
 
     public function redirectTo(string $url): RedirectResponse
     {
-        return redirect($url)
+        $response = redirect($url)
             ->with('errors', $this->validator->getErrorMessages());
+
+        Session::save();
+
+        return $response;
     }
 }
