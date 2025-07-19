@@ -28,6 +28,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Session Domain
+    |--------------------------------------------------------------------------
+    |
+    | This value defines the domain that the session cookie is available to.
+    | You can set this to a specific domain or subdomain to restrict the cookie
+    | scope, or leave it null to default to the current domain of the request.
+    | Setting this correctly helps control cookie sharing across subdomains.
+    |
+    */
+    'domain' => env('SESSION_DOMAIN'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Session Prefix
     |--------------------------------------------------------------------------
     |
