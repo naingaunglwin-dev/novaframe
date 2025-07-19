@@ -2,22 +2,15 @@
 
 namespace NovaFrame\Session\Drivers;
 
-use NovaFrame\Encryption\Encryption;
+use NovaFrame\Facade\Cookie;
 
 class CookieSessionDriver extends AbstractDriver
 {
     /**
-     * Indicates whether the cookie value should be encrypted.
-     *
-     * @var bool
-     */
-    private bool $shouldEncrypt;
-
-    /**
      * CookieSessionDriver constructor.
      *
      * @param array $config Session configuration including:
-     *                      - lifetime: int
+     *                      - expire: int
      *                      - encrypt: bool
      *                      - session_path: string
      *                      - domain: string
@@ -28,7 +21,6 @@ class CookieSessionDriver extends AbstractDriver
     public function __construct(protected array $config)
     {
         parent::__construct($config);
-        $this->shouldEncrypt = $config['encrypt'] ?? true;
     }
 
     /**
@@ -48,8 +40,8 @@ class CookieSessionDriver extends AbstractDriver
 
         $cookieName = $this->getName();
 
-        if (isset($_COOKIE[$cookieName])) {
-            $data = $this->shouldEncrypt ? Encryption::decrypt($_COOKIE[$cookieName]) : $_COOKIE[$cookieName];
+        if (Cookie::has($cookieName)) {
+            $data = Cookie::get($cookieName);
 
             if (!empty($data)) {
                 $this->data = $data;
@@ -91,18 +83,7 @@ class CookieSessionDriver extends AbstractDriver
 
         $this->data = unserialize($data);
 
-        setcookie(
-            $this->getName(),
-            $this->shouldEncrypt ? Encryption::encrypt($this->data) : $this->data,
-            [
-                'expires' => time() + $this->config['lifetime'],
-                'path' => $this->config['session_path'],
-                'domain' => $this->config['domain'],
-                'secure' => $this->config['secure'],
-                'httponly' => $this->config['httponly'],
-                'samesite' => $this->config['samesite'],
-            ]
-        );
+        Cookie::set($this->getName(), $this->data);
 
         return true;
     }
@@ -115,18 +96,7 @@ class CookieSessionDriver extends AbstractDriver
      */
     public function destroy(string $id): bool
     {
-        setcookie(
-            $this->getName(),
-            '',
-            [
-                'expires' => time() - 42000,
-                'path' => $this->config['session_path'],
-                'domain' => $this->config['domain'],
-                'secure' => $this->config['secure'],
-                'httponly' => $this->config['httponly'],
-                'samesite' => $this->config['samesite'],
-            ]
-        );
+        Cookie::expire($this->getName());
 
         $this->data = [];
 

@@ -7,6 +7,7 @@ use NovaFrame\Console\CommandLoader;
 use NovaFrame\Container\Container;
 use NovaFrame\Exception\ExceptionHandler;
 use NovaFrame\Facade\Config;
+use NovaFrame\Facade\Cookie;
 use NovaFrame\Facade\Session;
 use NovaFrame\Http\Request;
 use NovaFrame\Http\Response;
@@ -125,29 +126,31 @@ class Kernel extends Container
     }
 
     /**
-     * Terminate the application, send response if needed.
+     * Terminates the request lifecycle by saving session and cookies,
+     * and sending the final response.
      *
-     * @param mixed $respond
-     * @param Response $response
-     * @return int|mixed
+     * This method is intended for internal framework use, such as
+     * exception handling or kernel shutdown.
+     *
+     * **Note:** Application code should avoid calling this method directly.
+     *
+     * @internal
      */
-    public function terminate($respond, Response $response)
+    public function terminate($respond, Response $response): mixed
     {
         Session::save();
+        Cookie::save();
 
         if ($respond instanceof Response) {
             $respond->send();
-            $respond->clean();
             return 0;
         }
 
         if (is_string($respond)) {
-            $response->setContent($respond)->send();
-            $response->clean();
+            $response->setContent($respond)
+                ->send();
             return 0;
         }
-
-        $response->clean(); // make sure restore any values to original
 
         return $respond;
     }
