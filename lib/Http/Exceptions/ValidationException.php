@@ -17,13 +17,9 @@ class ValidationException extends RuntimeException
 
     public function redirect(): RedirectResponse
     {
-        $response = response()
+        return response()
             ->back()
             ->with('errors', $this->validator->getErrorMessages());
-
-        Session::save();
-
-        return $response;
     }
 
     public function getErrorMessages(): array
@@ -51,11 +47,7 @@ class ValidationException extends RuntimeException
 
     public function redirectTo(string $url): RedirectResponse
     {
-        $response = redirect($url)
+        return redirect($url)
             ->with('errors', $this->validator->getErrorMessages());
-
-        Session::save();
-
-        return $response;
     }
 }

@@ -45,7 +45,7 @@ class ExceptionHandler
     public function handle(\Throwable $e)
     {
         if ($e instanceof ValidationException) {
-            $e->redirect()->send();
+            app()->terminate($e->redirect(), new Response());
             return true;
         }
 
