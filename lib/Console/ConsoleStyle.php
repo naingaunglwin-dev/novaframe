@@ -8,8 +8,14 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ConsoleStyle
 {
+    /**
+     * @var SymfonyStyle
+     */
     protected SymfonyStyle $io;
 
+    /**
+     * @var InputInterface
+     */
     protected InputInterface $input;
 
     protected OutputInterface $output;
@@ -22,55 +28,57 @@ class ConsoleStyle
         $this->io = new SymfonyStyle($input, $output);
     }
 
-    public function success(string $message, bool $newline = false, string $emoji = '✓'): void
+    public function success(string $message, bool $newline = false, string $icon = '✓', int $padding = 1): void
     {
-        $emoji = rtrim($emoji);
+        $icon = $this->strPadToIcon($icon, 1);
 
-        $this->message($emoji . $message, 'green', newline: $newline);
+        $this->message($icon . $message, 'green', newline: $newline, padding: $padding);
     }
 
-    public function error(string $message, bool $newline = false, string $emoji = '🞩'): void
+    public function error(string $message, bool $newline = false, string $icon = '🞩', int $padding = 1): void
     {
-        $emoji = rtrim($emoji);
+        $icon = $this->strPadToIcon($icon, 1);
 
-        $this->message( $emoji . $message, 'red', newline: $newline);
+        $this->message( $icon . $message, 'red', newline: $newline, padding: $padding);
     }
 
-    public function warning(string $message, bool $newline = false, string $emoji = '⚠'): void
+    public function warning(string $message, bool $newline = false, string $icon = '⚠', int $padding = 1): void
     {
-        $emoji = rtrim($emoji);
+        $icon = $this->strPadToIcon($icon, 1);
 
-        $this->message($emoji . $message, 'yellow', newline: $newline);
+        $this->message($icon . $message, 'yellow', newline: $newline, padding: $padding);
     }
 
-    public function info(string $message, bool $newline = false): void
+    public function info(string $message, bool $newline = false, int $padding = 0): void
     {
-        $this->message($message, 'cyan', newline: $newline);
+        $this->message($message, 'cyan', newline: $newline, padding: $padding);
     }
 
-    public function comment(string $message, bool $newline = false): void
+    public function comment(string $message, bool $newline = false, int $padding = 0): void
     {
-        $this->message($message, 'yellow', newline: $newline);
+        $this->message($message, 'yellow', newline: $newline, padding: $padding);
     }
 
-    public function text(string $message, bool $newline = false, string $emoji = ''): void
+    public function text(string $message, bool $newline = false, string $icon = '', int $padding = 0): void
     {
-        $this->message( $emoji . $message, 'default', newline: $newline);
+        $icon = $this->strPadToIcon($icon, 1);
+
+        $this->message( $icon . $message, 'default', newline: $newline, padding: $padding);
     }
 
-    public function secondary(string $message, bool $newline = false, string $emoji = ''): void
+    public function secondary(string $message, bool $newline = false, string $icon = '', int $padding = 0): void
     {
-        $this->message($emoji . $message, 'gray', newline: $newline);
+        $this->message($icon . $message, 'gray', newline: $newline, padding: $padding);
     }
 
-    public function box(string $message, string $foreground = '', string $background = '', array $options = [], bool $newline = false): void
+    public function box(string $message, string $foreground = 'black', string $background = 'white', array $options = [], bool $newline = false, int $padding = 0): void
     {
-        $this->message(" $message ", $foreground, $background, $options, $newline);
+        $this->message($message, $foreground, $background, $options, $newline, $padding);
     }
 
     public function ask(string $question, ?string $default = null): mixed
     {
-       return  $this->io->ask($question, $default);
+        return  $this->io->ask($question, $default);
     }
 
     public function confirm(string $question, bool $default = true): bool
@@ -98,7 +106,7 @@ class ConsoleStyle
         $this->output->writeln($message, $options);
     }
 
-    public function message(string $message, ?string $foreground = null, ?string $background = null, array $options = [], bool $newline = false): void
+    public function message(string $message, ?string $foreground = null, ?string $background = null, array $options = [], bool $newline = false, int $padding = 0): void
     {
         $string = '<';
 
@@ -115,6 +123,8 @@ class ConsoleStyle
 
             $string .= 'options=' . $option . ';';
         }
+
+        $message = str_repeat(' ', $padding) . $message . str_repeat(' ', $padding);
 
         $string .= '>' . $message . '</>';
 
@@ -144,5 +154,14 @@ class ConsoleStyle
     public function getSymfonyStyle(): SymfonyStyle
     {
         return $this->io;
+    }
+
+    private function strPadToIcon(string $icon = '', int $padding = 0): string
+    {
+        if ($icon === '') {
+            return $icon;
+        }
+
+        return $icon . str_repeat(' ', $padding);
     }
 }
