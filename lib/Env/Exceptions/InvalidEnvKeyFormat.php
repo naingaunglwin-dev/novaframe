@@ -2,12 +2,10 @@
 
 namespace NovaFrame\Env\Exceptions;
 
-use RuntimeException;
-
-class InvalidEnvKeyFormat extends RuntimeException
+class InvalidEnvKeyFormat extends EnvRuntimeException
 {
-    public function __construct(string $key, string $file)
+    public function __construct(string $key, string $file, string $line = '')
     {
-        parent::__construct('Invalid key format is used in env variable: ' . $key . ' in ' . $file);
+        parent::__construct("Invalid env key: $key in $file" . ($line !== '' ? "($line)" : ''));
     }
 }
