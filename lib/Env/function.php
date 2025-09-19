@@ -1,6 +1,6 @@
 <?php
 
-use NovaFrame\Facade\Env;
+use NovaFrame\Env\Env;
 
 if (!function_exists('env')) {
     /**
@@ -11,7 +11,7 @@ if (!function_exists('env')) {
      * @param bool $group Whether to get group of environment variables.
      * @return mixed The environment value or group array.
      */
-    function env(string $key, $default = null, bool $group = false)
+    function env(string $key, $default = null, bool $group = false): mixed
     {
         return $group ? Env::group($key, $default) : Env::get($key, $default);
     }
