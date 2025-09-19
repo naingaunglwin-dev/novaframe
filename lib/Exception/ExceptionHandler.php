@@ -3,7 +3,7 @@
 namespace NovaFrame\Exception;
 
 use NovaFrame\Facade\Config;
-use NovaFrame\Facade\Env;
+use NovaFrame\Env\Env;
 use NovaFrame\Helpers\Path\Path;
 use NovaFrame\Http\Exceptions\HttpException;
 use NovaFrame\Http\Exceptions\ValidationException;

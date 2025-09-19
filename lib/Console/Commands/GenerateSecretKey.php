@@ -3,7 +3,8 @@
 namespace NovaFrame\Console\Commands;
 
 use NovaFrame\Console\Command;
-use NovaFrame\Facade\Env;
+use NovaFrame\Env\Env;
+use NovaFrame\Helpers\FileSystem\FileSystem;
 use NovaFrame\Helpers\Path\Path;
 
 class GenerateSecretKey extends Command
@@ -72,7 +73,7 @@ class GenerateSecretKey extends Command
 
     public function handle()
     {
-        $envs = Env::getDefaultEnvFiles();
+        $envs = array_filter(glob(DIR_ROOT . ''), );
 
         $existedKey = '';
         $existedFile = '';
@@ -118,9 +119,11 @@ class GenerateSecretKey extends Command
     {
         $file = Path::join(DIR_ROOT, $file);
 
-        $content = file_get_contents($file);
+        $content = FileSystem::fread($file);
 
-        $lines = array_filter(explode(PHP_EOL, $content), function ($line) {
+        $normalized = str_replace(["\r\n", "\r"], "\n", $content);
+
+        $lines = array_filter(explode(PHP_EOL, $normalized), function ($line) {
             return !str_starts_with(trim($line), 'APP_KEY=');
         });
 
@@ -158,14 +161,14 @@ class GenerateSecretKey extends Command
 
     private function isSecretKeyAlreadyExists(string $env): bool
     {
-        $env = new \NovaFrame\Env\Env($env);
+        $env = Env::create(name: $env);
 
-        return $env->has('APP_KEY');
+        return $env->has('APP_KEY') && !empty($env->get('APP_KEY'));
     }
 
     private function getSecretKey(string $env): string
     {
-        $env = new \NovaFrame\Env\Env($env);
+        $env = Env::create(name: $env);
 
         return $env->get('APP_KEY');
     }

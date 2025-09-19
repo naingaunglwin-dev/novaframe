@@ -2,7 +2,7 @@
 
 namespace NovaFrame\Config;
 
-use NovaFrame\Facade\Env;
+use NovaFrame\Env\Env;
 use NovaFrame\Helpers\Path\Path;
 
 class ConfigLoader

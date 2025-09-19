@@ -2,7 +2,7 @@
 
 namespace NovaFrame\Http;
 
-use NovaFrame\Facade\Env;
+use NovaFrame\Env\Env;
 use NovaFrame\RuntimeEnv;
 use NovaFrame\Storage\Storage;
 use NovaFrame\Validation\Rule;
