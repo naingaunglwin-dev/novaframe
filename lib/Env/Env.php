@@ -23,8 +23,10 @@ use NovaFrame\Env\Loader\LoaderRegistry;
  *
  * @method static mixed get(string $key, mixed $default = null)
  * @method static mixed group(string $key, mixed $default = null)
+ * @method static bool has(string $key)
  * @method mixed get(string $key, mixed $default = null)
  * @method mixed group(string $key, mixed $default = null)
+ * @method bool has(string $key)
  */
 class Env
 {
@@ -150,8 +152,14 @@ class Env
 
     public function __call(string $name, array $arguments): mixed
     {
-        if (in_array($name, ['get', 'group'])) {
-            return $this->call($this, $arguments, $name === 'get' ? 'envs' : 'groups');
+        if (in_array($name, ['get', 'group', 'has'])) {
+            $env = $this->call($this, $arguments, $name === 'get' || $name === 'has' ? 'envs' : 'groups');
+
+            if ($name === 'has') {
+                return !empty($env);
+            }
+
+            return $env;
         }
 
         throw new \BadMethodCallException("Call to undefined method: {$name}()");
@@ -161,8 +169,14 @@ class Env
     {
         $instance = self::$instance ?? self::create();
 
-        if (in_array($name, ['get', 'group'])) {
-            return $instance->call($instance, $arguments, $name === 'get' ? 'envs' : 'groups');
+        if (in_array($name, ['get', 'group', 'has'])) {
+            $env = $instance->call($instance, $arguments, $name === 'get' || $name === 'has' ? 'envs' : 'groups');
+
+            if ($name === 'has') {
+                return !empty($env);
+            }
+
+            return $env;
         }
 
         throw new \BadMethodCallException("Call to undefined method: {$name}()");
