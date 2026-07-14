@@ -57,7 +57,9 @@ class RouteCollection
                 $middlewares = [$middlewares];
             }
 
-            $this->routes['list'][$method][$route]['middleware'] = $middlewares;
+            $_routeMiddleware = $this->routes['list'][$method][$route]['middleware'] ?? [];
+
+            $this->routes['list'][$method][$route]['middleware'] = array_merge($_routeMiddleware, $middlewares);
         }
     }
 
